@@ -1,5 +1,10 @@
 package CY_PUZZLE;
 
+import java.nio.file.*;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -13,8 +18,8 @@ import java.io.File;
 
 public class SideBarFactory {
 
-    // Chemin du dossier sélectionné, accessible pour la résolution
     private static File selectedPuzzleDirectory = null;
+    private static List<File> selectedPngFiles = List.of();
 
     public static VBox createSideBarPanel(Label pieceLabel, Label timerLabel) {
         VBox sideBarPanel = new VBox(10);
@@ -38,7 +43,7 @@ public class SideBarFactory {
         directoryLabel.setWrapText(true);
         directoryLabel.setMaxWidth(Double.MAX_VALUE);
 
-        // Bouton pour choisir un dossier
+        // Bouton pour choisir un dossier avec parcour de sous dossiers
         Button uploadButton = ButtonFactory.createButton("Télécharger un dossier", Color.web("#2ecc71"));
         uploadButton.setMaxWidth(Double.MAX_VALUE);
         uploadButton.setOnAction(event -> {
@@ -50,27 +55,37 @@ public class SideBarFactory {
             if (directory != null) {
                 selectedPuzzleDirectory = directory;
 
-                        // Fichiers .png
-        File[] pngFiles = directory.listFiles(file ->
-            !file.isDirectory() && file.getName().toLowerCase().endsWith(".png")
-        );
-        int pngCount = (pngFiles != null) ? pngFiles.length : 0;
-        
-        // MAJ du label de pièce
-        pieceLabel.setText("Pièces : " + pngCount);
+                try (Stream<Path> paths = Files.walk(directory.toPath())) {
+                    selectedPngFiles = paths
+                        .filter(Files::isRegularFile)
+                        .filter(p -> p.toString().toLowerCase().endsWith(".png"))
+                        .map(Path::toFile)
+                        .collect(Collectors.toList());
+                } catch (IOException e) {
+                    selectedPngFiles = List.of();
+                    e.printStackTrace();
+                }
 
-                // Fichiers non .png
-        File[] nonPngFiles = directory.listFiles(file ->
-            !file.isDirectory() && !file.getName().toLowerCase().endsWith(".png")
-        );
-                
+                int pngCount = selectedPngFiles.size();
+                pieceLabel.setText("Pièces : " + pngCount);
 
-        if (nonPngFiles != null && nonPngFiles.length > 0) {
-            directoryLabel.setText("Attention : " + nonPngFiles.length + " fichier(s) non attendus. " +
-                                   pngCount + " fichier(s) .png détectés.");
-        } else {
-            directoryLabel.setText("Dossier : " + directory.getName());
-        }
+                // Vérifie s'il y a d'autres fichiers que des .png
+                long nonPngCount = 0;
+                try (Stream<Path> allFiles = Files.walk(directory.toPath())) {
+                    nonPngCount = allFiles
+                        .filter(Files::isRegularFile)
+                        .filter(p -> !p.toString().toLowerCase().endsWith(".png"))
+                        .count();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (nonPngCount > 0) {
+                    directoryLabel.setText("Attention : " + nonPngCount + " fichier(s) non attendus. " +
+                                           pngCount + " fichier(s) .png détectés.");
+                } else {
+                    directoryLabel.setText("Dossier : " + directory.getName());
+                }
             }
         });
 
@@ -80,7 +95,11 @@ public class SideBarFactory {
         startButton.setOnAction(e -> {
             if (selectedPuzzleDirectory != null) {
                 System.out.println("Dossier à résoudre : " + selectedPuzzleDirectory.getAbsolutePath());
-                // Mettre ici le code pour lancer la résolution du puzzle !!!!
+                System.out.println("Fichiers trouvés :");
+                selectedPngFiles.forEach(f -> System.out.println(" - " + f.getAbsolutePath()));
+
+                // ici utiliser selectedPngFiles pour l'algorithme de résolution
+
             } else {
                 directoryLabel.setText("⚠️ Veuillez d'abord choisir un dossier !");
             }
@@ -94,5 +113,9 @@ public class SideBarFactory {
 
     public static File getSelectedPuzzleDirectory() {
         return selectedPuzzleDirectory;
+    }
+
+    public static List<File> getSelectedPngFiles() {
+        return selectedPngFiles;
     }
 }
