@@ -8,3 +8,6 @@ Commande pour compiler : javac --module-path "C:\Users\kalpi\Desktop\javafx-sdk-
 Commande pour executer : java --module-path "C:\Users\kalpi\Desktop\javafx-sdk-17.0.15\lib" --add-modules javafx.controls,javafx.fxml -cp out CY_PUZZLE.Main 
 
 A la plaçe de "C:\Users\kalpi\Desktop\javafx-sdk-17.0.15\lib" et "C:\Users\kalpi\Desktop\javafx-sdk-17.0.15\lib" mettez vos chemins de javafx 
+
+
+Pour télécharger javaFX : https://gluonhq.com/products/javafx/ --> Prenez bien la version 17 et SDK
