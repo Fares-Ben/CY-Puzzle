@@ -69,8 +69,7 @@ public class SideBarFactory {
             directoryLabel.setText("Attention : " + nonPngFiles.length + " fichier(s) non attendus. " +
                                    pngCount + " fichier(s) .png détectés.");
         } else {
-            directoryLabel.setText("Dossier : " + directory.getName() +
-                                   " (" + pngCount + " fichier(s) .png)");
+            directoryLabel.setText("Dossier : " + directory.getName());
         }
             }
         });
