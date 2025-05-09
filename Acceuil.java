@@ -63,7 +63,7 @@ public class Acceuil extends JFrame {
         sideBarPanel.setBorder(new EmptyBorder(30, 30, 30, 30));
 
         JLabel titleLabel = createLabel("CY-PUZZLE", 30, Font.BOLD);
-        JButton uploadButton = createButton("Télécharger une image", new Color(46, 204, 113));
+        JButton uploadButton = createButton("Télécharger un dossier", new Color(46, 204, 113));
         JButton startButton = createButton("Lancer la résolution", new Color(146, 104, 113));
 
         pieceLabel = createLabel("Pièces :", 18, Font.PLAIN);
