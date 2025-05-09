@@ -18,7 +18,7 @@ public class ButtonFactory {
         button.setEffect(new DropShadow());
         button.setStyle("-fx-cursor: hand;");
 
-        // Hover effect
+        // Effet de survol
         button.setOnMouseEntered(e -> {
             button.setBackground(new Background(new BackgroundFill(color.darker(), new CornerRadii(10), null)));
         });
