@@ -10,7 +10,7 @@ import javafx.scene.paint.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-public class Acceuil extends Application {
+public class Accueil extends Application {
 
     private final int FRAME_WIDTH = 1200;
     private final int FRAME_HEIGHT = 800;
