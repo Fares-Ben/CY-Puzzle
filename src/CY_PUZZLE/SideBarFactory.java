@@ -9,12 +9,16 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+
+import static CY_PUZZLE.Accueil.gridPane;
 
 public class SideBarFactory {
 
@@ -105,9 +109,33 @@ public class SideBarFactory {
             }
         });
 
+        // Bouton pour afficher les images
+        Button showImagesButton = ButtonFactory.createButton("Afficher les images", Color.web("#3498db"));
+        showImagesButton.setMaxWidth(Double.MAX_VALUE);
+        showImagesButton.setOnAction(event -> {
+            gridPane.getChildren().clear(); // Efface les anciens contenus
+
+            int col = 0;
+            int row = 0;
+            for (File imageFile : selectedPngFiles) {
+                Image image = new Image(imageFile.toURI().toString());
+                ImageView imageView = new ImageView(image);
+                imageView.setFitWidth(100); // Ajuste la largeur de l'image
+                imageView.setPreserveRatio(true);
+
+                gridPane.add(imageView, col, row);
+
+                col++;
+                if (col >= 4) { // Passe à la ligne suivante après 4 images
+                    col = 0;
+                    row++;
+                }
+            }
+        });
+
         VBox statsPanel = StatsPanelFactory.createStatsPanel(pieceLabel, timerLabel);
 
-        sideBarPanel.getChildren().addAll(titleLabel, uploadButton, directoryLabel, startButton, statsPanel);
+        sideBarPanel.getChildren().addAll(titleLabel, uploadButton, directoryLabel, startButton, showImagesButton, statsPanel);
         return sideBarPanel;
     }
 

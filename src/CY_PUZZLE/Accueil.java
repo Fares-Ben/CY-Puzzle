@@ -17,6 +17,7 @@ public class Accueil extends Application {
     private final int GRID_SIZE = 4;
 
     private Label pieceLabel, timerLabel;
+    public static GridPane gridPane;
 
     @Override
     public void start(Stage primaryStage) {
@@ -25,7 +26,7 @@ public class Accueil extends Application {
 
         VBox sideBarPanel = SideBarFactory.createSideBarPanel(pieceLabel, timerLabel);
 
-        GridPane gridPane = new GridPane();
+        gridPane = new GridPane();
         gridPane.setStyle("-fx-background-color: white;");
         gridPane.setPadding(new Insets(10));
         gridPane.setHgap(5);
