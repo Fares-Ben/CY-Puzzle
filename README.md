@@ -3,11 +3,11 @@
 #LePremierCommit #Jefarmlescommits #suuuuuuuu
 
 
-Commande pour compiler : javac --module-path "C:\Users\kalpi\Desktop\javafx-sdk-17.0.15\lib" --add-modules javafx.controls,javafx.fxml -d out src\CY_PUZZLE\\*.java
+Commande pour compiler : javac --module-path "H:\Documents\javafx-sdk-21.0.7\lib" --add-modules javafx.controls,javafx.fxml -d out src\CY_PUZZLE\\*.java
 
-Commande pour executer : java --module-path "C:\Users\kalpi\Desktop\javafx-sdk-17.0.15\lib" --add-modules javafx.controls,javafx.fxml -cp out CY_PUZZLE.Main 
+Commande pour executer : java --module-path "H:\Documents\javafx-sdk-21.0.7\lib" --add-modules javafx.controls,javafx.fxml -cp out CY_PUZZLE.Main 
 
-A la plaçe de "C:\Users\kalpi\Desktop\javafx-sdk-17.0.15\lib" et "C:\Users\kalpi\Desktop\javafx-sdk-17.0.15\lib" mettez vos chemins de javafx 
+A la plaçe de "H:\Documents\javafx-sdk-21.0.7\lib"  mettez vos chemins de javafx 
 
 
-Pour télécharger javaFX : https://gluonhq.com/products/javafx/ --> Prenez bien la version 17 et SDK
+Pour télécharger javaFX : https://gluonhq.com/products/javafx/ --> Prenez bien la version 21 et SDK
