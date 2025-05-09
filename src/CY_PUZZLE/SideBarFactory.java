@@ -49,7 +49,13 @@ public class SideBarFactory {
 
             if (directory != null) {
                 selectedPuzzleDirectory = directory;
-                directoryLabel.setText("Dossier : " + directory.getName());
+                File[] nonPngFiles = directory.listFiles(file -> !file.isDirectory() && !file.getName().toLowerCase().endsWith(".png"));
+
+            if (nonPngFiles != null && nonPngFiles.length > 0) {
+                  directoryLabel.setText("⚠️ " + nonPngFiles.length + " fichier(s) non attendus détectés !");
+                } else {
+                     directoryLabel.setText("Dossier : " + directory.getName());
+                }
             }
         });
 
