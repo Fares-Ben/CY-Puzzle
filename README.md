@@ -10,4 +10,4 @@ Commande pour executer : java --module-path "H:\Documents\javafx-sdk-21.0.7\lib"
 A la plaçe de "H:\Documents\javafx-sdk-21.0.7\lib"  mettez vos chemins de javafx 
 
 
-Pour télécharger javaFX : https://gluonhq.com/products/javafx/ --> Prenez bien la version 21 et SDK
+Pour télécharger javaFX : https://gluonhq.com/products/javafx/ --> Prenez bien la version 21 et SDK 
