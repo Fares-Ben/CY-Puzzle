@@ -114,26 +114,34 @@ public class SideBarFactory {
         showImagesButton.setOnAction(event -> {
             gridPane.getChildren().clear(); // Efface les anciens contenus
 
+            int totalImages = selectedPngFiles.size();
+            int gridSize = (int) Math.ceil(Math.sqrt(totalImages)); // Calculer la taille de la grille (ex: 100x100 pour 10,000 images)
+
+            double cellSize = Math.min(gridPane.getWidth() / gridSize, gridPane.getHeight() / gridSize); // Ajuster la taille des cellules
+
+            gridPane.setPrefSize(gridPane.getWidth(), gridPane.getHeight()); // S'assurer que le GridPane occupe tout l'espace disponible
+
             int col = 0;
             int row = 0;
+
             for (File imageFile : selectedPngFiles) {
                 Image image = new Image(imageFile.toURI().toString());
                 ImageView imageView = new ImageView(image);
-                imageView.setFitWidth(100); // Ajuste la largeur de l'image
+                imageView.setFitWidth(cellSize); // Ajuste la largeur de l'image pour qu'elle tienne dans la cellule
+                imageView.setFitHeight(cellSize); // Ajuste la hauteur de l'image pour qu'elle tienne dans la cellule
                 imageView.setPreserveRatio(true);
 
                 gridPane.add(imageView, col, row);
 
                 col++;
-                if (col >= 4) { // Passe à la ligne suivante après 4 images
+                if (col >= gridSize) { // Passe à la ligne suivante après le nombre maximum de colonnes
                     col = 0;
                     row++;
                 }
             }
-            // Bouton pour effacer les images
-
         });
 
+        // Bouton pour effacer les images
         Button clearImagesButton = ButtonFactory.createButton("Effacer les images", Color.web("#e74c3c"));
         clearImagesButton.setMaxWidth(Double.MAX_VALUE);
         clearImagesButton.setOnAction(exc -> {

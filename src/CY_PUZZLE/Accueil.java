@@ -28,9 +28,9 @@ public class Accueil extends Application {
 
         gridPane = new GridPane();
         gridPane.setStyle("-fx-background-color: white;");
-        gridPane.setPadding(new Insets(10));
-        gridPane.setHgap(5);
-        gridPane.setVgap(5);
+        gridPane.setPadding(new Insets(0)); // Supprime les marges pour maximiser l'espace
+        gridPane.setHgap(0); // Supprime les espaces horizontaux entre les cellules
+        gridPane.setVgap(0); // Supprime les espaces verticaux entre les cellules
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
                 gridPane.add(new Label(" "), j, i); // case vide temporaire
@@ -39,7 +39,8 @@ public class Accueil extends Application {
 
         ScrollPane scrollPane = new ScrollPane(gridPane);
         scrollPane.setFitToWidth(true);
-        scrollPane.setStyle("-fx-background: #f0f0f0; -fx-padding: 20;");
+        scrollPane.setFitToHeight(true); // Permet au ScrollPane de s'adapter à la hauteur
+        scrollPane.setStyle("-fx-background: #f0f0f0; -fx-padding: 0;"); // Supprime les paddings pour maximiser l'espace
 
         HBox root = new HBox();
         root.getChildren().addAll(sideBarPanel, scrollPane);
