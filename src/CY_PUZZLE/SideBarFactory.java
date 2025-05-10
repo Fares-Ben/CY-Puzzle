@@ -32,7 +32,7 @@ public class SideBarFactory {
         sideBarPanel.setPrefWidth(300);
 
         // Fond dégradé
-        Stop[] stops = new Stop[] {
+        Stop[] stops = new Stop[]{
             new Stop(0, Color.web("#2980b9")),
             new Stop(1, Color.web("#2c3e50"))
         };
@@ -61,10 +61,10 @@ public class SideBarFactory {
 
                 try (Stream<Path> paths = Files.walk(directory.toPath())) {
                     selectedPngFiles = paths
-                        .filter(Files::isRegularFile)
-                        .filter(p -> p.toString().toLowerCase().endsWith(".png"))
-                        .map(Path::toFile)
-                        .collect(Collectors.toList());
+                            .filter(Files::isRegularFile)
+                            .filter(p -> p.toString().toLowerCase().endsWith(".png"))
+                            .map(Path::toFile)
+                            .collect(Collectors.toList());
                 } catch (IOException e) {
                     selectedPngFiles = List.of();
                     e.printStackTrace();
@@ -77,16 +77,16 @@ public class SideBarFactory {
                 long nonPngCount = 0;
                 try (Stream<Path> allFiles = Files.walk(directory.toPath())) {
                     nonPngCount = allFiles
-                        .filter(Files::isRegularFile)
-                        .filter(p -> !p.toString().toLowerCase().endsWith(".png"))
-                        .count();
+                            .filter(Files::isRegularFile)
+                            .filter(p -> !p.toString().toLowerCase().endsWith(".png"))
+                            .count();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
                 if (nonPngCount > 0) {
-                    directoryLabel.setText("Attention : " + nonPngCount + " fichier(s) non attendus. " +
-                                           pngCount + " fichier(s) .png détectés.");
+                    directoryLabel.setText("Attention : " + nonPngCount + " fichier(s) non attendus. "
+                            + pngCount + " fichier(s) .png détectés.");
                 } else {
                     directoryLabel.setText("Dossier : " + directory.getName());
                 }
@@ -103,7 +103,6 @@ public class SideBarFactory {
                 selectedPngFiles.forEach(f -> System.out.println(" - " + f.getAbsolutePath()));
 
                 // ici utiliser selectedPngFiles pour l'algorithme de résolution
-
             } else {
                 directoryLabel.setText("⚠️ Veuillez d'abord choisir un dossier !");
             }
@@ -131,11 +130,20 @@ public class SideBarFactory {
                     row++;
                 }
             }
+            // Bouton pour effacer les images
+
+        });
+
+        Button clearImagesButton = ButtonFactory.createButton("Effacer les images", Color.web("#e74c3c"));
+        clearImagesButton.setMaxWidth(Double.MAX_VALUE);
+        clearImagesButton.setOnAction(exc -> {
+            gridPane.getChildren().clear();
         });
 
         VBox statsPanel = StatsPanelFactory.createStatsPanel(pieceLabel, timerLabel);
 
-        sideBarPanel.getChildren().addAll(titleLabel, uploadButton, directoryLabel, startButton, showImagesButton, statsPanel);
+        sideBarPanel.getChildren().addAll(titleLabel, uploadButton, directoryLabel, startButton, showImagesButton, clearImagesButton, statsPanel);
+
         return sideBarPanel;
     }
 
