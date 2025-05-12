@@ -10,6 +10,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -26,6 +27,7 @@ import static CY_PUZZLE.Accueil.gridPane;
 
 public class SideBarFactory {
 
+    private static final double SIDEBAR_WIDTH = 300; // Largeur fixe de la barre latérale
     private static File selectedPuzzleDirectory = null;
     private static List<File> selectedPngFiles = List.of();
 
@@ -33,7 +35,9 @@ public class SideBarFactory {
         VBox sideBarPanel = new VBox(10);
         sideBarPanel.setAlignment(Pos.TOP_CENTER);
         sideBarPanel.setPadding(new Insets(30));
-        sideBarPanel.setPrefWidth(300);
+        sideBarPanel.setPrefWidth(SIDEBAR_WIDTH);
+        sideBarPanel.setMinWidth(SIDEBAR_WIDTH);  // Forcer la largeur minimale
+        sideBarPanel.setMaxWidth(SIDEBAR_WIDTH);  // Forcer la largeur maximale
 
         // Fond dégradé
         Stop[] stops = new Stop[]{
@@ -94,6 +98,51 @@ public class SideBarFactory {
                 } else {
                     directoryLabel.setText("Dossier : " + directory.getName());
                 }
+
+                // Affichage immédiat des images
+                List<PuzzlePiece> puzzlePieces = new ArrayList<>();
+                for (File file : selectedPngFiles) {
+                    try {
+                        puzzlePieces.add(new PuzzlePiece(file));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+
+                if (!puzzlePieces.isEmpty()) {
+                    gridPane.getChildren().clear();
+                    
+                    // Configuration du GridPane principal
+                    gridPane.setPadding(new Insets(10));
+                    gridPane.setHgap(5);
+                    gridPane.setVgap(5);
+                    
+                    // Calcul du nombre de colonnes optimal
+                    int numCols = (int) Math.ceil(Math.sqrt(puzzlePieces.size()));// nombre de colonne en fonction de la racine carre 
+                    int numRows = (int) Math.ceil(puzzlePieces.size() / (double) numCols);
+                    
+                    int index = 0;
+                    for (int row = 0; row < numRows && index < puzzlePieces.size(); row++) {
+                        for (int col = 0; col < numCols && index < puzzlePieces.size(); col++) {
+                            try {
+                                PuzzlePiece piece = puzzlePieces.get(index++);
+                                Image image = convertToFxImage(piece.getImage());
+                                ImageView imageView = new ImageView(image);
+                                
+                                imageView.setFitWidth(80);
+                                imageView.setFitHeight(80);
+                                imageView.setPreserveRatio(true);
+                                
+                                StackPane imageContainer = new StackPane(imageView);
+                                imageContainer.setPadding(new Insets(2));
+                                
+                                gridPane.add(imageContainer, col, row);
+                            } catch (Exception t) {
+                                t.printStackTrace();
+                            }
+                        }
+                    }
+                }
             }
         });
 
@@ -125,8 +174,6 @@ public class SideBarFactory {
                 PuzzleSolver solver = new PuzzleSolver(puzzlePieces);
 
                 PuzzlePiece[][] tab = solver.solve();
-                
-
                 
 
 
@@ -162,49 +209,9 @@ public class SideBarFactory {
             }
         });
 
-        // Bouton pour afficher les images
-        Button showImagesButton = ButtonFactory.createButton("Afficher les images", Color.web("#3498db"));
-        showImagesButton.setMaxWidth(Double.MAX_VALUE);
-        showImagesButton.setOnAction(event -> {
-            gridPane.getChildren().clear(); // Efface les anciens contenus
-
-            int totalImages = selectedPngFiles.size();
-            int gridSize = (int) Math.ceil(Math.sqrt(totalImages)); // Calculer la taille de la grille (ex: 100x100 pour 10,000 images)
-
-            double cellSize = Math.min(gridPane.getWidth() / gridSize, gridPane.getHeight() / gridSize); // Ajuster la taille des cellules
-
-            gridPane.setPrefSize(gridPane.getWidth(), gridPane.getHeight()); // S'assurer que le GridPane occupe tout l'espace disponible
-
-            int col = 0;
-            int row = 0;
-
-            for (File imageFile : selectedPngFiles) {
-                Image image = new Image(imageFile.toURI().toString());
-                ImageView imageView = new ImageView(image);
-                imageView.setFitWidth(cellSize); // Ajuste la largeur de l'image pour qu'elle tienne dans la cellule
-                imageView.setFitHeight(cellSize); // Ajuste la hauteur de l'image pour qu'elle tienne dans la cellule
-                imageView.setPreserveRatio(true);
-
-                gridPane.add(imageView, col, row);
-
-                col++;
-                if (col >= gridSize) { // Passe à la ligne suivante après le nombre maximum de colonnes
-                    col = 0;
-                    row++;
-                }
-            }
-        });
-
-        // Bouton pour effacer les images
-        Button clearImagesButton = ButtonFactory.createButton("Effacer les images", Color.web("#e74c3c"));
-        clearImagesButton.setMaxWidth(Double.MAX_VALUE);
-        clearImagesButton.setOnAction(exc -> {
-            gridPane.getChildren().clear();
-        });
-
         VBox statsPanel = StatsPanelFactory.createStatsPanel(pieceLabel, timerLabel);
 
-        sideBarPanel.getChildren().addAll(titleLabel, uploadButton, directoryLabel, startButton, showImagesButton, clearImagesButton, statsPanel);
+        sideBarPanel.getChildren().addAll(titleLabel, uploadButton, directoryLabel, startButton, statsPanel);
 
         return sideBarPanel;
     }
