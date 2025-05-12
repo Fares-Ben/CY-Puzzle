@@ -2,6 +2,7 @@ package CY_PUZZLE;
 
 import java.nio.file.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -15,6 +16,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+
+import java.awt.image.BufferedImage;
+import javafx.embed.swing.SwingFXUtils;
 
 import java.io.File;
 
@@ -102,7 +106,57 @@ public class SideBarFactory {
                 System.out.println("Fichiers trouvés :");
                 selectedPngFiles.forEach(f -> System.out.println(" - " + f.getAbsolutePath()));
 
-                // ici utiliser selectedPngFiles pour l'algorithme de résolution
+                // Liste de pièce ==================
+                List<PuzzlePiece> puzzlePieces = new ArrayList<>();
+                for (File file : selectedPngFiles) {
+                    try {
+                        puzzlePieces.add(new PuzzlePiece(file));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                
+                //Apelle la fonction qui résoud a partir de la liste de pièce : 
+                if (puzzlePieces.isEmpty()) {
+                    System.err.println("❌ Aucune pièce PNG valide trouvée !");
+                    return;
+                }
+                
+                PuzzleSolver solver = new PuzzleSolver(puzzlePieces);
+
+                PuzzlePiece[][] tab = solver.solve();
+                
+
+                
+
+
+                gridPane.getChildren().clear();
+
+                int rows = solver.getRows();
+                int cols = solver.getCols();
+
+                for (int r = 0; r < rows; r++) {
+                    for (int c = 0; c < cols; c++) {
+                        PuzzlePiece piece = tab[r][c];
+
+                        if (piece == null) continue;
+
+                        try {
+                            Image image = convertToFxImage(piece.getImage());
+                            ImageView imageView = new ImageView(image);
+
+                            imageView.setFitWidth(50);     // à adapter
+                            imageView.setFitHeight(50);    // à adapter
+                            imageView.setPreserveRatio(true);
+
+                            gridPane.add(imageView, c, r);
+                        } catch (Exception t) {
+                            // Faudra voir on veut recup quoi comme erreur mais bon 
+                        }
+                    }
+                }
+
+
             } else {
                 directoryLabel.setText("⚠️ Veuillez d'abord choisir un dossier !");
             }
@@ -153,6 +207,10 @@ public class SideBarFactory {
         sideBarPanel.getChildren().addAll(titleLabel, uploadButton, directoryLabel, startButton, showImagesButton, clearImagesButton, statsPanel);
 
         return sideBarPanel;
+    }
+
+    public static Image convertToFxImage(BufferedImage bf) {
+        return SwingFXUtils.toFXImage(bf, null);
     }
 
     public static File getSelectedPuzzleDirectory() {
