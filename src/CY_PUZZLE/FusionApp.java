@@ -30,8 +30,8 @@ import javafx.scene.image.ImageView;
 
         ImageView imageView = new ImageView(imageFusionnee);
 
-        StackPane root = new StackPane(); // vide
-        root.getChildren().add(imageView); // on ajoute l'imageView explicitement
+        StackPane root = new StackPane();
+        root.getChildren().add(imageView);
 
         Scene scene = new Scene(root, imageFusionnee.getWidth(), imageFusionnee.getHeight());
         primaryStage.setScene(scene);
@@ -42,7 +42,7 @@ import javafx.scene.image.ImageView;
 
 public static Image fusionnerImages(Image img1, Image img2) {
     int decalage = 0;
-    double scale = 0.5; // réduction par 10
+    double scale = 0.5;
 
     int width = (int) (Math.max(img1.getWidth(), img2.getWidth()) * scale);
     int height = (int) ((img1.getHeight() + img2.getHeight() - decalage) * scale);
