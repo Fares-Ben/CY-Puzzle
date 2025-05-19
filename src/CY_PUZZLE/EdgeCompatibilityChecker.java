@@ -1,3 +1,4 @@
+package CY_PUZZLE;
 public class EdgeCompatibilityChecker {
     private int colorTolerance;
     private int lengthTolerance;
