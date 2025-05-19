@@ -69,18 +69,54 @@ public class SideBarFactory {
         addFolderButton.setOnAction(e -> {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle("Choisir un dossier de puzzle");
-            File selectedDir = directoryChooser.showDialog(null); // null = fenêtre principale à ajuster si possible
+            File selectedDir = directoryChooser.showDialog(null);
             if (selectedDir != null && selectedDir.isDirectory()) {
                 selectedPuzzleDirectory = selectedDir;
                 directoryLabel.setText("Dossier sélectionné : " + selectedDir.getName());
-                // Si tu veux aussi lister les png dans ce dossier :
+                
+                // Afficher les pièces dans la grille
+                Accueil.gridPane.getChildren().clear();
                 try (Stream<Path> files = Files.list(selectedDir.toPath())) {
                     selectedPngFiles = files
                         .filter(p -> p.toString().toLowerCase().endsWith(".png"))
                         .map(Path::toFile)
                         .collect(Collectors.toList());
+                    
+                    // Afficher chaque image dans la grille
+                    int col = 0;
+                    int row = 0;
+                    int maxCol = 5; // Nombre de colonnes dans la grille
+
+                    for (File imgFile : selectedPngFiles) {
+                        Image fxImage = new Image(imgFile.toURI().toString());
+                        ImageView imageView = new ImageView(fxImage);
+                        imageView.setFitWidth(100);
+                        imageView.setFitHeight(100);
+                        imageView.setPreserveRatio(true);
+
+                        Accueil.gridPane.add(imageView, col, row);
+                        
+                        col++;
+                        if (col >= maxCol) {
+                            col = 0;
+                            row++;
+                        }
+                    }
+
+                    // Mettre à jour le label des pièces
+                    pieceLabel.setText("Nombre de pièces : " + selectedPngFiles.size());
+                    
+                    // Afficher la liste des fichiers dans la zone de texte
+                    StringBuilder fileList = new StringBuilder();
+                    fileList.append("Pièces trouvées dans le dossier :\n\n");
+                    selectedPngFiles.forEach(file -> 
+                        fileList.append(file.getName()).append("\n")
+                    );
+                    Accueil.piecesListArea.setText(fileList.toString());
+                    
                 } catch (IOException ex) {
                     ex.printStackTrace();
+                    Accueil.piecesListArea.setText("Erreur lors de la lecture du dossier.");
                 }
             }
         });
