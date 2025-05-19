@@ -83,48 +83,49 @@ public class PuzzlePiece {
             default -> null;
         };
     }
+    
     //methode qui retourne le nombre de cotés lisse de la piece
     public int countFreeSides(Image image) {
-    PixelReader reader = image.getPixelReader();
-    int width = (int) image.getWidth();
-    int height = (int) image.getHeight();
-    int threshold = 10; // tolérance (ex: au moins 10 pixels "vides")
+        PixelReader reader = image.getPixelReader();
+        int width = (int) image.getWidth();
+        int height = (int) image.getHeight();
+        int threshold = 10; // tolérance (ex: au moins 10 pixels "vides")
 
-    int freeSides = 0;
+        int freeSides = 0;
 
-    // Vérifie le haut
-    int transparentTop = 0;
-    for (int x = 0; x < width; x++) {
-        Color c = reader.getColor(x, 0);
-        if (c.getOpacity() < 0.1) transparentTop++;
+        // Vérifie le haut
+        int transparentTop = 0;
+        for (int x = 0; x < width; x++) {
+            Color c = reader.getColor(x, 0);
+            if (c.getOpacity() < 0.1) transparentTop++;
+        }
+        if (transparentTop > threshold) freeSides++;
+
+        // Vérifie le bas
+        int transparentBottom = 0;
+        for (int x = 0; x < width; x++) {
+            Color c = reader.getColor(x, height - 1);
+            if (c.getOpacity() < 0.1) transparentBottom++;
+        }
+        if (transparentBottom > threshold) freeSides++;
+
+        // Vérifie la gauche
+        int transparentLeft = 0;
+        for (int y = 0; y < height; y++) {
+            Color c = reader.getColor(0, y);
+            if (c.getOpacity() < 0.1) transparentLeft++;
+        }
+        if (transparentLeft > threshold) freeSides++;
+
+        // Vérifie la droite
+        int transparentRight = 0;
+        for (int y = 0; y < height; y++) {
+            Color c = reader.getColor(width - 1, y);
+            if (c.getOpacity() < 0.1) transparentRight++;
+        }
+        if (transparentRight > threshold) freeSides++;
+
+        return freeSides;
     }
-    if (transparentTop > threshold) freeSides++;
-
-    // Vérifie le bas
-    int transparentBottom = 0;
-    for (int x = 0; x < width; x++) {
-        Color c = reader.getColor(x, height - 1);
-        if (c.getOpacity() < 0.1) transparentBottom++;
-    }
-    if (transparentBottom > threshold) freeSides++;
-
-    // Vérifie la gauche
-    int transparentLeft = 0;
-    for (int y = 0; y < height; y++) {
-        Color c = reader.getColor(0, y);
-        if (c.getOpacity() < 0.1) transparentLeft++;
-    }
-    if (transparentLeft > threshold) freeSides++;
-
-    // Vérifie la droite
-    int transparentRight = 0;
-    for (int y = 0; y < height; y++) {
-        Color c = reader.getColor(width - 1, y);
-        if (c.getOpacity() < 0.1) transparentRight++;
-    }
-    if (transparentRight > threshold) freeSides++;
-
-    return freeSides;
-}
 
 }
