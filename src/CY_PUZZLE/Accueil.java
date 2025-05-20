@@ -2,12 +2,14 @@ package CY_PUZZLE;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.text.Font;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class Accueil extends Application {
@@ -19,6 +21,9 @@ public class Accueil extends Application {
     private Label pieceLabel, timerLabel;
     public static GridPane gridPane;
 
+    // Nouveau champ pour afficher la liste des pièces
+    public static TextArea piecesListArea;
+
     @Override
     public void start(Stage primaryStage) {
         pieceLabel = LabelFactory.createLabel("Pièces :", 18);
@@ -28,19 +33,32 @@ public class Accueil extends Application {
 
         gridPane = new GridPane();
         gridPane.setStyle("-fx-background-color: white;");
-        gridPane.setPadding(new Insets(0)); // Supprime les marges pour maximiser l'espace
-        gridPane.setHgap(0); // Supprime les espaces horizontaux entre les cellules
-        gridPane.setVgap(0); // Supprime les espaces verticaux entre les cellules
+        gridPane.setPadding(new Insets(0));
+        gridPane.setHgap(0);
+        gridPane.setVgap(0);
+
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
-                gridPane.add(new Label(" "), j, i); // case vide temporaire
+                gridPane.add(new Label(" "), j, i);
             }
         }
 
-        ScrollPane scrollPane = new ScrollPane(gridPane);
+        // Création du TextArea pour la liste des pièces
+        piecesListArea = new TextArea();
+        piecesListArea.setEditable(false);
+        piecesListArea.setWrapText(true);
+        piecesListArea.setPrefHeight(150);  // taille raisonnable pour la liste
+        piecesListArea.setStyle("-fx-font-family: monospace;");
+
+        // VBox qui contiendra la grille + la liste des pièces
+        VBox rightPane = new VBox(10, gridPane, piecesListArea);
+        rightPane.setPadding(new Insets(10));
+        rightPane.setFillWidth(true);
+
+        ScrollPane scrollPane = new ScrollPane(rightPane);
         scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true); // Permet au ScrollPane de s'adapter à la hauteur
-        scrollPane.setStyle("-fx-background: #f0f0f0; -fx-padding: 0;"); // Supprime les paddings pour maximiser l'espace
+        scrollPane.setFitToHeight(true);
+        scrollPane.setStyle("-fx-background: #f0f0f0; -fx-padding: 0;");
 
         HBox root = new HBox();
         root.getChildren().addAll(sideBarPanel, scrollPane);
