@@ -5,6 +5,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+
 import java.nio.file.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -127,88 +128,77 @@ public class SideBarFactory {
         });
         // Bouton pour lancer la résolution
         Button startButton = ButtonFactory.createButton("Lancer la résolution", Color.web("#926871"));
-    startButton.setMaxWidth(Double.MAX_VALUE);
+startButton.setMaxWidth(Double.MAX_VALUE);
 
-    startButton.setOnAction(event -> {
-        if (selectedPuzzleDirectory == null) {
-            Accueil.piecesListArea.setText("⚠️ Veuillez d'abord choisir un dossier !");
-            return;
-        }
+startButton.setOnAction(event -> {
+    if (selectedPuzzleDirectory == null) {
+        Accueil.piecesListArea.setText("⚠️ Veuillez d'abord choisir un dossier !");
+        return;
+    }
 
-        // Création de la popup de chargement
-        Stage loadingPopup = new Stage();
-        loadingPopup.initModality(Modality.APPLICATION_MODAL);
-        loadingPopup.setTitle("Chargement...");
+    // Création de la popup de chargement
+    Stage loadingPopup = new Stage();
+    loadingPopup.initModality(Modality.APPLICATION_MODAL);
+    loadingPopup.setTitle("Chargement...");
 
-        VBox loadingBox = new VBox(10);
-        loadingBox.setAlignment(Pos.CENTER);
-        loadingBox.setPadding(new Insets(20));
+    VBox loadingBox = new VBox(10);
+    loadingBox.setAlignment(Pos.CENTER);
+    loadingBox.setPadding(new Insets(20));
 
-        ProgressBar loadingBar = new ProgressBar();
-        loadingBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+    ProgressBar loadingBar = new ProgressBar();
+    loadingBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
 
-        Label loadingLabel = new Label("Résolution du puzzle en cours...");
-        loadingBox.getChildren().addAll(loadingLabel, loadingBar);
+    Label loadingLabel = new Label("Résolution du puzzle en cours...");
+    loadingBox.getChildren().addAll(loadingLabel, loadingBar);
 
-        Scene loadingScene = new Scene(loadingBox, 300, 100);
-        loadingPopup.setScene(loadingScene);
-        loadingPopup.show();
+    Scene loadingScene = new Scene(loadingBox, 300, 100);
+    loadingPopup.setScene(loadingScene);
+    loadingPopup.show();
 
-        // 10 Secondes du popup 
-        PauseTransition pause = new PauseTransition(Duration.seconds(10));
-        pause.setOnFinished(e -> {
-            loadingPopup.close(); // Ferme la popup
+    // 10 secondes d'attente simulée
+    PauseTransition pause = new PauseTransition(Duration.seconds(2));
+    pause.setOnFinished(e -> {
+        loadingPopup.close(); // Ferme la popup
 
-            // Ensuite on lance la résolution du puzzle
-            Platform.runLater(() -> {
-                try {
-                    Path folderPath = selectedPuzzleDirectory.toPath();
-                    PuzzleSolver solver = new PuzzleSolver(folderPath);
-                    PuzzleSolver.PuzzleResult result = solver.solvePuzzle();
+        // Lancement de la résolution
+        Platform.runLater(() -> {
+            try {
+                Path folderPath = selectedPuzzleDirectory.toPath();
+                PuzzleSolver solver = new PuzzleSolver(folderPath);
+                PuzzleSolver.PuzzleResult result = solver.solvePuzzle();
 
-                    String[][] matrix = result.getMatrix();
-                    Accueil.gridPane.getChildren().clear();
+                String[][] matrix = result.getMatrix();
 
-                    for (int r = 0; r < matrix.length; r++) {
-                        for (int c = 0; c < matrix[0].length; c++) {
-                            String pieceId = matrix[r][c];
-                            if (pieceId == null || pieceId.isEmpty()) continue;
+                // 🔁 ENLEVER affichage pièce par pièce :
+                // Accueil.gridPane.getChildren().clear();
+                // boucle d'affichage des ImageView supprimée
 
-                            File imgFile = folderPath.resolve(pieceId + ".png").toFile();
-                            if (!imgFile.exists()) continue;
+                // ✅ Affichage fusionné
+                FusionApp.showFusion(matrix, folderPath);
 
-                            Image fxImage = new Image(imgFile.toURI().toString());
-                            ImageView imageView = new ImageView(fxImage);
-                            imageView.setFitWidth(50);
-                            imageView.setFitHeight(50);
-                            imageView.setPreserveRatio(true);
 
-                            Accueil.gridPane.add(imageView, c, r);
-                        }
+                // Affichage texte des pièces utilisées
+                StringBuilder sb = new StringBuilder("Résolution terminée !\n\n");
+                for (int r = 0; r < matrix.length; r++) {
+                    for (int c = 0; c < matrix[0].length; c++) {
+                        String pieceId = matrix[r][c];
+                        if (pieceId == null) pieceId = "----";
+                        sb.append(String.format("%-15s", pieceId));
                     }
-
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("Résolution terminée !\n\n");
-                    for (int r = 0; r < matrix.length; r++) {
-                        for (int c = 0; c < matrix[0].length; c++) {
-                            String pieceId = matrix[r][c];
-                            if (pieceId == null) pieceId = "----";
-                            sb.append(String.format("%-15s", pieceId));
-                        }
-                        sb.append("\n");
-                    }
-
-                    Accueil.piecesListArea.setText(sb.toString());
-
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                    Accueil.piecesListArea.setText("Erreur lors de la résolution.");
+                    sb.append("\n");
                 }
-            });
-        });
+                Accueil.piecesListArea.setText(sb.toString());
 
-        pause.play();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                Accueil.piecesListArea.setText("Erreur lors de la résolution.");
+            }
+        });
     });
+
+    pause.play();
+});
+
 
     
     
