@@ -49,7 +49,7 @@ public static Image assemblerPuzzle(String[][] grille) {
     double totalRawHeight = 0;
 
     String basePath = Paths.get("resources", "images").toString();
-    int decalage = 25;
+    int decalage = 0;
     // Calcul largeur max pour chaque colonne
     for (int col = 0; col < cols; col++) {
         double colWidth = 0;
