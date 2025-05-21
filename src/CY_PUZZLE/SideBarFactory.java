@@ -160,7 +160,7 @@ startButton.setOnAction(event -> {
     loadingPopup.setScene(loadingScene);
     loadingPopup.show();
 
-    // 10 secondes d'attente simulée
+    // Simule un petit délai avant de lancer la résolution
     PauseTransition pause = new PauseTransition(Duration.seconds(2));
     pause.setOnFinished(e -> {
         loadingPopup.close(); // Ferme la popup
@@ -168,19 +168,19 @@ startButton.setOnAction(event -> {
         // Lancement de la résolution
         Platform.runLater(() -> {
             try {
+                long startTime = System.currentTimeMillis(); // ⏱️ Début chrono
+
                 Path folderPath = selectedPuzzleDirectory.toPath();
                 PuzzleSolver solver = new PuzzleSolver(folderPath);
                 PuzzleSolver.PuzzleResult result = solver.solvePuzzle();
 
-                String[][] matrix = result.getMatrix();
+                long endTime = System.currentTimeMillis(); // ⏱️ Fin chrono
+                double durationSeconds = (endTime - startTime) / 1000.0;
 
-                // 🔁 ENLEVER affichage pièce par pièce :
-                // Accueil.gridPane.getChildren().clear();
-                // boucle d'affichage des ImageView supprimée
+                String[][] matrix = result.getMatrix();
 
                 // ✅ Affichage fusionné
                 FusionApp.showFusion(matrix, folderPath);
-
 
                 // Affichage texte des pièces utilisées
                 StringBuilder sb = new StringBuilder("Résolution terminée !\n\n");
@@ -194,15 +194,21 @@ startButton.setOnAction(event -> {
                 }
                 Accueil.piecesListArea.setText(sb.toString());
 
+                // ⏱️ Affichage du temps dans le timerLabel
+                timerLabel.setText(String.format("Timer ⏱ : %.2f secondes", durationSeconds));
+
             } catch (IOException ex) {
                 ex.printStackTrace();
                 Accueil.piecesListArea.setText("Erreur lors de la résolution.");
+                timerLabel.setText("⏱ Échec de la résolution.");
             }
         });
     });
 
     pause.play();
 });
+
+
 
 
 Button downloadButton = ButtonFactory.createButton("Télécharger l'image", Color.web("#2ecc71")); // Couleur verte, harmonieuse
