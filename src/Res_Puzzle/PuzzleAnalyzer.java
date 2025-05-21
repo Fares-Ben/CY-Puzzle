@@ -43,11 +43,12 @@ public class PuzzleAnalyzer {
             EdgeResult r = results[side.ordinal()];
             
             System.out.printf(
-                "Side %s → type=%d, lengths=%s, colors=%s%n",
+                "Side %s → type=%d, lengths=%s, colors=%s, profondeur=%d%n",
                 side,
                 r.type(),
                 Arrays.toString(r.lengths()),
-                Arrays.toString(r.colors())
+                Arrays.toString(r.colors()),
+                r.profondeur()
             );
         }
         
@@ -238,10 +239,11 @@ private static boolean touchesVoid(boolean[][] mask, int x, int y) {
         int[] lengths = new int[3];
         int[] rgbSums = new int[3];
         int[] rgbMeans = new int[3];
+        int profondeur = 0;
 
         boolean[][] isEdge = new boolean[h][w];
         if (edge.isEmpty()) {
-            return new EdgeResult(2, lengths, new int[3]);
+            return new EdgeResult(2, lengths, new int[3],0);
         }
         for (Point p : edge){
 
@@ -313,13 +315,33 @@ private static boolean touchesVoid(boolean[][] mask, int x, int y) {
                 case LEFT:   type = (delta > 0) ? 1 : 0; break;
             }
 
+            // Variables pour la profondeur
+            int maxAbsDist      = Integer.MIN_VALUE;
+            int profMax   = 0;
+            Point maxPoint = null;
+
             for (Point p : middle) {
+                //distance +=1
                 lengths[1]++;
+                //calcul du rgb moyen
                 int rgb = img.getRGB(p.x, p.y);
                 rgbSums[1] += (((rgb >> 16) & 0xFF) + ((rgb >> 8) & 0xFF) + (rgb & 0xFF)) / 3;
 
+                //calcul de la profondeur
+
+                int distance = (axe == 1)
+                    ? p.y - origine.y
+                    : p.x - origine.x;
+
+                if (Math.abs(distance) > maxAbsDist) {
+                    maxAbsDist    = Math.abs(distance);
+                    profMax = distance;    // on garde bien le signe
+                    maxPoint = p;
+                }
+
                 //System.out.printf("x:%d y:%d |", p.x, p.y);
             }
+            profondeur = profMax;
         }
         /** 
         // Affichage 0/1 pour debug de la partie centrale
@@ -335,17 +357,17 @@ private static boolean touchesVoid(boolean[][] mask, int x, int y) {
             rgbMeans[k] = (lengths[k] == 0) ? 0 : (rgbSums[k] / lengths[k]);
         }
 
-        return new EdgeResult(type, lengths, rgbMeans);
+        return new EdgeResult(type, lengths, rgbMeans, profondeur);
     }
 
     
     public static void main(String[] args) throws IOException {
 
 
-        File    file1 = new File("/home/cytech/Desktop/cat/25x16/img_2_0.png");
+        File    file1 = new File("/home/cytech/Desktop/cat/10x5/img_0_0.png");
         BufferedImage img1 = ImageIO.read(file1);
 
-        File    file2 = new File("/home/cytech/Desktop/cat/25x16/img_5_0.png");
+        File    file2 = new File("/home/cytech/Desktop/cat/10x5/img_0_1.png");
         BufferedImage img2 = ImageIO.read(file2);
 
 
