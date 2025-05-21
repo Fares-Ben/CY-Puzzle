@@ -1,3 +1,5 @@
+package Res_Puzzle;
+
 public class EdgeCompatibilityChecker {
     public boolean areCompatible(EdgeResult e1, EdgeResult e2) {
         // 1) Types : on exclut les plats et on impose tenon/mortise

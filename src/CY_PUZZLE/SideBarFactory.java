@@ -1,4 +1,8 @@
 package CY_PUZZLE;
+
+import Res_Puzzle.PuzzleSolver;
+
+
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;

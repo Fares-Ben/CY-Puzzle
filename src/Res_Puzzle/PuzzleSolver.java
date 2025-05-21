@@ -1,3 +1,4 @@
+package Res_Puzzle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;

@@ -1,3 +1,4 @@
+package Res_Puzzle;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
