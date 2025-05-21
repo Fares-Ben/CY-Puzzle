@@ -2,6 +2,7 @@ package CY_PUZZLE;
 
 import Res_Puzzle.PuzzleSolver;
 
+import javafx.stage.FileChooser;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -204,7 +205,24 @@ startButton.setOnAction(event -> {
 });
 
 
-    
+Button downloadButton = ButtonFactory.createButton("Télécharger l'image", Color.web("#2ecc71")); // Couleur verte, harmonieuse
+downloadButton.setMaxWidth(Double.MAX_VALUE);
+downloadButton.setOnAction(e -> {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Enregistrer l'image fusionnée");
+    fileChooser.setInitialFileName("puzzle_resolu.png");
+    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Fichier PNG", "*.png"));
+
+    File file = fileChooser.showSaveDialog(null);
+    if (file != null) {
+        FusionApp.sauvegarderImageFusion(file);
+        Accueil.piecesListArea.setText("✅ Image sauvegardée : " + file.getName());
+    } else {
+        Accueil.piecesListArea.setText("❌ Sauvegarde annulée.");
+    }
+});
+
+
     
 
         
@@ -212,7 +230,7 @@ startButton.setOnAction(event -> {
 
         VBox statsPanel = StatsPanelFactory.createStatsPanel(pieceLabel, timerLabel);
 
-        sideBarPanel.getChildren().addAll(titleLabel, addFolderButton, directoryLabel, startButton, statsPanel);
+        sideBarPanel.getChildren().addAll(titleLabel, addFolderButton, directoryLabel, startButton, downloadButton, statsPanel);
 
         return sideBarPanel;
     }

@@ -2,7 +2,16 @@ package CY_PUZZLE;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-// ✅ LE BON
+import javafx.embed.swing.SwingFXUtils;
+
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+import javafx.scene.SnapshotParameters;
+
+import javafx.scene.Node; // pour pouvoir passer un Node au ScrollPane si besoin
+
 import javafx.scene.image.*;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -12,8 +21,9 @@ import javafx.scene.control.ScrollPane; // ✅ celui-là
 
 import java.io.File;
 import java.nio.file.Paths;
+import javafx.scene.image.Image;
 
-import javafx.scene.image.ImageView;
+import javax.imageio.ImageIO;
 
 
 import java.nio.file.Path;
@@ -21,6 +31,7 @@ import java.nio.file.Path;
 public class FusionApp {
 
     private static String[][] matrixFromResolution;
+    private static Image imageFusionFinale = null;
 
     public static void setMatrixFromButton(String[][] matrix) {
         matrixFromResolution = matrix;
@@ -29,13 +40,14 @@ public class FusionApp {
     
     
 public static void showFusion(String[][] matrix, Path folderPath) {
-    Image fusion = assemblerPuzzle(matrix, folderPath, 1.0); // Échelle 1.0 pour avoir l'image complète
-    if (fusion == null) {
+    imageFusionFinale = assemblerPuzzle(matrix, folderPath, 1.0);
+    if (imageFusionFinale == null) {
+
         System.out.println("❌ Échec de la fusion");
         return;
     }
-
-    ImageView view = new ImageView(fusion);
+    ImageView view = new ImageView(imageFusionFinale);
+    
     view.setPreserveRatio(true); // Important pour ne pas déformer l'image
     view.setSmooth(true);
     view.setCache(true);
@@ -50,8 +62,9 @@ public static void showFusion(String[][] matrix, Path folderPath) {
     double windowHeight = 800;
 
     // Adapter l’image à la taille de la fenêtre sans déborder
-    double imgWidth = fusion.getWidth();
-    double imgHeight = fusion.getHeight();
+    double imgWidth = imageFusionFinale.getWidth();
+double imgHeight = imageFusionFinale.getHeight();
+
 
     double scaleX = windowWidth / imgWidth;
     double scaleY = windowHeight / imgHeight;
@@ -158,5 +171,23 @@ public static void showFusion(String[][] matrix, Path folderPath) {
 
         return result;
     }
+
+public static void sauvegarderImageFusion(File file) {
+    if (imageFusionFinale == null) {
+        System.out.println("Aucune image fusionnée à sauvegarder !");
+        return;
+    }
+    WritableImage writable = new WritableImage((int) imageFusionFinale.getWidth(), (int) imageFusionFinale.getHeight());
+    imageFusionFinale = new WritableImage(imageFusionFinale.getPixelReader(), (int) imageFusionFinale.getWidth(), (int) imageFusionFinale.getHeight());
+
+    try {
+        ImageIO.write(SwingFXUtils.fromFXImage(imageFusionFinale, null), "png", file);
+        System.out.println("✅ Image sauvegardée dans : " + file.getAbsolutePath());
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+
 }
     
