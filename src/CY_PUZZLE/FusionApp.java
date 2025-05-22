@@ -1,4 +1,5 @@
 package CY_PUZZLE;
+import javafx.application.Platform;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -40,47 +41,38 @@ public class FusionApp {
     
     
 public static void showFusion(String[][] matrix, Path folderPath) {
-    imageFusionFinale = assemblerPuzzle(matrix, folderPath, 1.0);
+    Image imageFusionFinale = assemblerPuzzle(matrix, folderPath, 1.0);
     if (imageFusionFinale == null) {
-
         System.out.println("❌ Échec de la fusion");
         return;
     }
-    ImageView view = new ImageView(imageFusionFinale);
-    
-    view.setPreserveRatio(true); // Important pour ne pas déformer l'image
-    view.setSmooth(true);
-    view.setCache(true);
 
-    ScrollPane scrollPane = new ScrollPane(view);
-    scrollPane.setPannable(true); // Permet de déplacer l'image si besoin
-    scrollPane.setFitToWidth(true);
-    scrollPane.setFitToHeight(true);
+    // Mise à jour de l'image dans l'ImageView statique de la vue principale
+    Platform.runLater(() -> {
+        Accueil.fusionImageView.setImage(imageFusionFinale);
 
-    // Taille initiale de la fenêtre
-    double windowWidth = 1000;
-    double windowHeight = 800;
+        // Ajuste la taille pour que ça rentre bien (tu peux adapter)
+        double windowWidth = 600;  // par exemple largeur max dans ta vue
+        double windowHeight = 400; // hauteur max souhaitée
 
-    // Adapter l’image à la taille de la fenêtre sans déborder
-    double imgWidth = imageFusionFinale.getWidth();
-double imgHeight = imageFusionFinale.getHeight();
+        double imgWidth = imageFusionFinale.getWidth();
+        double imgHeight = imageFusionFinale.getHeight();
 
+        double scaleX = windowWidth / imgWidth;
+        double scaleY = windowHeight / imgHeight;
+        double scale = Math.min(scaleX, scaleY);
 
-    double scaleX = windowWidth / imgWidth;
-    double scaleY = windowHeight / imgHeight;
-    double scale = Math.min(scaleX, scaleY); // Prend le plus petit pour tout faire rentrer
+        Accueil.fusionImageView.setFitWidth(imgWidth * scale);
+        Accueil.fusionImageView.setFitHeight(imgHeight * scale);
+        Accueil.fusionImageView.setPreserveRatio(true);
+        Accueil.fusionImageView.setSmooth(true);
+        Accueil.gridPane.setVisible(false);
+Accueil.gridPane.setManaged(false);
+Accueil.piecesListArea.setVisible(false);
+Accueil.piecesListArea.setManaged(false);
 
-    view.setFitWidth(imgWidth * scale);
-    view.setFitHeight(imgHeight * scale);
-
-    Scene scene = new Scene(scrollPane, windowWidth, windowHeight);
-
-    Stage stage = new Stage();
-    stage.setTitle("Puzzle Fusionné");
-    stage.setScene(scene);
-    stage.show();
+    });
 }
-
 
     public static Image assemblerPuzzle(String[][] grille, Path folderPath, double scale) {
 
@@ -173,15 +165,18 @@ double imgHeight = imageFusionFinale.getHeight();
     }
 
 public static void sauvegarderImageFusion(File file) {
-    if (imageFusionFinale == null) {
+    Image imageFusion = Accueil.fusionImageView.getImage();
+    if (imageFusion == null) {
         System.out.println("Aucune image fusionnée à sauvegarder !");
         return;
     }
-    WritableImage writable = new WritableImage((int) imageFusionFinale.getWidth(), (int) imageFusionFinale.getHeight());
-    imageFusionFinale = new WritableImage(imageFusionFinale.getPixelReader(), (int) imageFusionFinale.getWidth(), (int) imageFusionFinale.getHeight());
 
     try {
-        ImageIO.write(SwingFXUtils.fromFXImage(imageFusionFinale, null), "png", file);
+        WritableImage writableImage = new WritableImage((int) imageFusion.getWidth(), (int) imageFusion.getHeight());
+        writableImage.getPixelWriter().setPixels(0, 0, (int) imageFusion.getWidth(), (int) imageFusion.getHeight(),
+            imageFusion.getPixelReader(), 0, 0);
+
+        ImageIO.write(SwingFXUtils.fromFXImage(writableImage, null), "png", file);
         System.out.println("✅ Image sauvegardée dans : " + file.getAbsolutePath());
     } catch (Exception e) {
         e.printStackTrace();

@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.ImageView; // <-- IMPORTANT : bon import ImageView JavaFX
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -23,6 +24,9 @@ public class Accueil extends Application {
 
     // Nouveau champ pour afficher la liste des pièces
     public static TextArea piecesListArea;
+
+    // **Déclaration statique pour l'image fusionnée**
+    public static ImageView fusionImageView; 
 
     @Override
     public void start(Stage primaryStage) {
@@ -44,14 +48,19 @@ public class Accueil extends Application {
         }
 
         // Création du TextArea pour la liste des pièces
-        piecesListArea = new TextArea();
+        piecesListArea = new TextArea(); // Il faut aussi l'initialiser ici, sinon NullPointerException
         piecesListArea.setEditable(false);
         piecesListArea.setWrapText(true);
-        piecesListArea.setPrefHeight(150);  // taille raisonnable pour la liste
+        piecesListArea.setPrefHeight(150);
         piecesListArea.setStyle("-fx-font-family: monospace;");
 
-        // VBox qui contiendra la grille + la liste des pièces
-        VBox rightPane = new VBox(10, gridPane, piecesListArea);
+        fusionImageView = new ImageView();
+        fusionImageView.setFitWidth(600); // largeur max, adapte à ta vue
+        fusionImageView.setPreserveRatio(true);
+        fusionImageView.setSmooth(true);
+        fusionImageView.setStyle("-fx-border-color: gray; -fx-border-width: 1;"); // Optionnel
+
+        VBox rightPane = new VBox(10, fusionImageView, gridPane, piecesListArea);
         rightPane.setPadding(new Insets(10));
         rightPane.setFillWidth(true);
 
