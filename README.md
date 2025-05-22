@@ -3,11 +3,13 @@
 #LePremierCommit #Jefarmlescommits #suuuuuuuu
 
 
-Commande pour compiler : javac --module-path "H:\Documents\javafx-sdk-21.0.7\lib" --add-modules javafx.controls,javafx.fxml,javafx.swing -d out src\CY_PUZZLE\*.java
+Commande pour compiler : javac -d out --module-path "H:\Documents\javafx-sdk-21.0.7\lib" --add-modules javafx.controls,javafx.fxml,javafx.swing src\CY_PUZZLE\*.java src\Res_Puzzle\*.java
 
 
 
-Commande pour executer : java --module-path "H:\Documents\javafx-sdk-21.0.7\lib" --add-modules javafx.controls,javafx.fxml,javafx.swing -cp out CY_PUZZLE.Accueil
+
+Commande pour executer : java --module-path "H:\Documents\javafx-sdk-21.0.7\lib" --add-modules javafx.controls,javafx.fxml,javafx.swing -cp out CY_PUZZLE.App
+
 
 
 
