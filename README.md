@@ -8,8 +8,7 @@ Commande pour compiler : javac -d out --module-path "H:\Documents\javafx-sdk-21.
 
 
 
-Commande pour executer : java --module-path "H:\Documents\javafx-sdk-21.0.7\lib" --add-modules javafx.controls,javafx.fxml,javafx.swing -cp out CY_PUZZLE.App
-
+Commande pour executer : java --module-path "H:\Documents\javafx-sdk-21.0.7\lib" --add-modules javafx.controls,javafx.fxml,javafx.swing -cp out CY_PUZZLE.Main
 
 
 
