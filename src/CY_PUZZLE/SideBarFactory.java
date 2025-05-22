@@ -49,6 +49,7 @@ public class SideBarFactory {
     private static final double SIDEBAR_WIDTH = 300; // Largeur fixe de la barre latérale
     private static File selectedPuzzleDirectory = null;
     private static List<File> selectedPngFiles = List.of();
+    public static ImageView fusionImageView;
 
     public static VBox createSideBarPanel(Label pieceLabel, Label timerLabel) {
         VBox sideBarPanel = new VBox(10);
@@ -84,7 +85,8 @@ public class SideBarFactory {
             if (selectedDir != null && selectedDir.isDirectory()) {
                 selectedPuzzleDirectory = selectedDir;
                 directoryLabel.setText("Dossier sélectionné : " + selectedDir.getName());
-                
+                timerLabel.setText("Timer ⏱ : 0.00 secondes");
+
                 // Afficher les pièces dans la grille
                 Accueil.gridPane.getChildren().clear();
                 try (Stream<Path> files = Files.list(selectedDir.toPath())) {
