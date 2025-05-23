@@ -26,10 +26,8 @@ public class PuzzleImageViewer extends JFrame {
     private final Map<String, BufferedImage> pieceImages = new HashMap<>();
     private final Map<String, PieceSave> pieceData    = new HashMap<>();
     
-    public static BufferedImage getAssembledImage(Path piecesFolder, PuzzleSolver solver, PuzzleSolver.PuzzleResult result) throws IOException {
-    PuzzleImageViewer viewer = new PuzzleImageViewer(piecesFolder, solver, result);
-    return viewer.assemblePuzzle();
-}
+    
+
 
     public PuzzleImageViewer(Path piecesFolder,
                              String[][] puzzleMatrix,
@@ -55,7 +53,7 @@ public class PuzzleImageViewer extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         try {
             loadPiecesData();
-            BufferedImage finalImage = assemblePuzzle();
+            BufferedImage finalImage = assemblePuzzle(null);
             // Redimensionnement proportionnel
             BufferedImage displayImage = getScaledInstance(finalImage,
                 MAX_DISPLAY_WIDTH, MAX_DISPLAY_HEIGHT);
@@ -89,11 +87,11 @@ public class PuzzleImageViewer extends JFrame {
         }
     }
 
-    private BufferedImage assemblePuzzle() {
+    private BufferedImage assemblePuzzle(ProgressListener listener) {
         int rows = puzzleMatrix.length;
         int cols = puzzleMatrix[0].length;
         BufferedImage finalImage = new BufferedImage(tailleTop, tailleLeft, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = finalImage.createGraphics();
+    Graphics2D g2d = finalImage.createGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, tailleTop, tailleLeft);
@@ -132,7 +130,9 @@ public class PuzzleImageViewer extends JFrame {
                 posY[r][c]     = posY[r - 1][c] + (above[7] - above[1]) + 1;
             }
         }
-
+        //pour la barre de progression
+    int totalPieces = rows * cols;
+    int piecesDrawn = 0;
         // Dessin des pièces
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
@@ -152,6 +152,19 @@ public class PuzzleImageViewer extends JFrame {
                         posX[r][c] + 10,
                         posY[r][c] + 50);
                 }
+                piecesDrawn++;
+            if (listener != null) {
+            double progressStep = 0.5 / (totalPieces * 3);
+            double progress = 0.5 + progressStep * piecesDrawn;
+            listener.onProgress(progress);
+
+            // Pause minime pour que la barre ait le temps de s’afficher
+            try {
+                Thread.sleep(5);  // 5 ms, à ajuster (plus grand = plus lent)
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
             }
         }
         g2d.dispose();
@@ -210,4 +223,15 @@ public class PuzzleImageViewer extends JFrame {
             e.printStackTrace();
         }
     }
+    public static BufferedImage getAssembledImage(Path piecesFolder, PuzzleSolver solver, PuzzleSolver.PuzzleResult result) throws IOException {
+    return getAssembledImageWithProgress(piecesFolder, solver, result, null);
+}
+
+public static BufferedImage getAssembledImageWithProgress(Path piecesFolder, PuzzleSolver solver, PuzzleSolver.PuzzleResult result, ProgressListener listener) throws IOException {
+    PuzzleImageViewer viewer = new PuzzleImageViewer(piecesFolder, solver, result);
+    return viewer.assemblePuzzle(listener);
+}
+
+
+
 }

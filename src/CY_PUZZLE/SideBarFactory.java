@@ -1,44 +1,30 @@
 package CY_PUZZLE;
-
+import javafx.concurrent.Task;
+import javafx.scene.control.Alert;
 import ttt.PuzzleSolver;
 import ttt.PieceSave;
 import ttt.PuzzleAnalyzer;
 import ttt.PuzzleImageViewer;
 import javafx.stage.FileChooser;
-
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-
-
 import java.nio.file.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import javax.imageio.ImageIO;
-
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-
 import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
-
 import java.io.File;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -148,7 +134,7 @@ startButton.setOnAction(event -> {
         return;
     }
 
-    // Création de la popup de chargement
+    // Création de la popup de chargement avec ProgressBar liée à la tâche
     Stage loadingPopup = new Stage();
     loadingPopup.initModality(Modality.APPLICATION_MODAL);
     loadingPopup.setTitle("Chargement...");
@@ -157,86 +143,95 @@ startButton.setOnAction(event -> {
     loadingBox.setAlignment(Pos.CENTER);
     loadingBox.setPadding(new Insets(20));
 
-    ProgressBar loadingBar = new ProgressBar();
-    loadingBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
-
+    ProgressBar loadingBar = new ProgressBar(0);
     Label loadingLabel = new Label("Résolution du puzzle en cours...");
-    loadingBox.getChildren().addAll(loadingLabel, loadingBar);
 
+    loadingBox.getChildren().addAll(loadingLabel, loadingBar);
     Scene loadingScene = new Scene(loadingBox, 300, 100);
     loadingPopup.setScene(loadingScene);
     loadingPopup.show();
 
-    PauseTransition pause = new PauseTransition(Duration.seconds(2));
-    pause.setOnFinished(e -> {
-        loadingPopup.close();
+    // Création d'une Task pour exécuter la résolution en arrière-plan
+    Task<Void> task = new Task<>() {
+        @Override
+        protected Void call() throws Exception {
+            Path folderPath = selectedPuzzleDirectory.toPath();
+            PuzzleSolver solver = new PuzzleSolver(folderPath);
 
-        // Tâche de fond pour résoudre + assembler
-        new Thread(() -> {
-            try {
-                long startTime = System.currentTimeMillis();
+            solver.setProgressListener(progress -> updateProgress(progress, 1.0));
 
-                Path folderPath = selectedPuzzleDirectory.toPath();
-                PuzzleSolver solver = new PuzzleSolver(folderPath);
-                PuzzleSolver.PuzzleResult result = solver.solvePuzzle();
+            long startTime = System.currentTimeMillis();
 
-                BufferedImage assembledImage = PuzzleImageViewer.getAssembledImage(folderPath, solver, result);
-                Image fxImage = SwingFXUtils.toFXImage(assembledImage, null);
+            PuzzleSolver.PuzzleResult result = solver.solvePuzzle();
 
-                long endTime = System.currentTimeMillis();
-                double durationSeconds = (endTime - startTime) / 1000.0;
+            // Vérification des pièces restantes
+            List<String> remaining = result.getRemainingIds();
+            if (!remaining.isEmpty()) {
+                // Affichage popup dans le thread UI
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Puzzle non résolu");
+                    alert.setHeaderText("Attention !");
+                    alert.setContentText("Le puzzle n'est pas complètement résolu.\n"
+                        + "Pièces non placées : " + String.join(", ", remaining));
+                    alert.showAndWait();
+                });
+                // On stoppe ici pour ne pas continuer l'assemblage
+                return null;
+            }
+
+            BufferedImage assembledImage = PuzzleImageViewer.getAssembledImageWithProgress(folderPath, solver, result, progress -> {
+                updateProgress(progress, 1.0);
+            });
+
+            long endTime = System.currentTimeMillis();
+            double durationSeconds = (endTime - startTime) / 1000.0;
+
+            Image fxImage = SwingFXUtils.toFXImage(assembledImage, null);
+
+            Platform.runLater(() -> {
+                Home.gridPane.getChildren().clear();
+                Home.fusionImageView.setImage(fxImage);
+                Home.fusionImageView.setPreserveRatio(true);
+                Home.fusionImageView.setSmooth(true);
+                Home.fusionImageView.setFitWidth(600);
+                Home.fusionImageView.setFitHeight(400);
+                Home.derniereImageAssemblee = assembledImage;
 
                 String[][] matrix = result.getMatrix();
-
-                // Mise à jour UI dans le thread JavaFX
-                Platform.runLater(() -> {
-                    Home.fusionImageView.setImage(fxImage);
-                    Home.fusionImageView.setPreserveRatio(true);
-                    Home.fusionImageView.setSmooth(true);
-                    Home.fusionImageView.setFitWidth(600);
-                    Home.fusionImageView.setFitHeight(400);
-            Home.derniereImageAssemblee = assembledImage;// Pour la sauvegarde
-
-
-                    StringBuilder sb = new StringBuilder("Résolution terminée !\n\n");
-                    for (int r = 0; r < matrix.length; r++) {
-                        for (int c = 0; c < matrix[0].length; c++) {
-                            String pieceId = matrix[r][c];
-                            if (pieceId == null) pieceId = "----";
-                            sb.append(String.format("%-15s", pieceId));
-                        }
-                        sb.append("\n");
+                StringBuilder sb = new StringBuilder("Résolution terminée !\n\n");
+                for (int r = 0; r < matrix.length; r++) {
+                    for (int c = 0; c < matrix[0].length; c++) {
+                        String pieceId = matrix[r][c];
+                        if (pieceId == null) pieceId = "----";
+                        sb.append(String.format("%-15s", pieceId));
                     }
-                    Home.piecesListArea.setText(sb.toString());
+                    sb.append("\n");
+                }
+                Home.piecesListArea.setText(sb.toString());
 
-                    timerLabel.setText(String.format("Timer ⏱ : %.2f secondes", durationSeconds));
-                });
-Platform.runLater(() -> {
-    Home.gridPane.getChildren().clear();  // <-- Vider la grille des pièces affichées avant affichage du puzzle final
+                timerLabel.setText(String.format("Timer ⏱ : %.2f secondes", durationSeconds));
+            });
+            return null;
+        }
+    };
 
-    Home.fusionImageView.setImage(fxImage);
-    Home.fusionImageView.setPreserveRatio(true);
-    Home.fusionImageView.setSmooth(true);
-    Home.fusionImageView.setFitWidth(600);
-    Home.fusionImageView.setFitHeight(400);
+    // Lie la barre de progression à la progression du task
+    loadingBar.progressProperty().bind(task.progressProperty());
 
-    // Le reste de ta mise à jour (texte, timer...)
-});
-
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                Platform.runLater(() -> {
-                    Home.piecesListArea.setText("Erreur lors de la résolution.");
-                    timerLabel.setText("⏱ Échec de la résolution.");
-                });
-            }
-        }).start();
+    // Quand la tâche est terminée, ferme la popup
+    task.setOnSucceeded(e -> loadingPopup.close());
+    task.setOnFailed(e -> {
+        loadingPopup.close();
+        Home.piecesListArea.setText("❌ Erreur lors de la résolution.");
+        timerLabel.setText("⏱ Échec de la résolution.");
     });
 
-    pause.play();
+    // Lance la tâche dans un thread de fond
+    Thread th = new Thread(task);
+    th.setDaemon(true);
+    th.start();
 });
-
-
 
 
 
@@ -266,14 +261,6 @@ downloadButton.setOnAction(e -> {
         Home.piecesListArea.setText("❌ Sauvegarde annulée.");
     }
 });
-
-
-
-   
-
-
-        
-        
 
         VBox statsPanel = StatsPanelFactory.createStatsPanel(pieceLabel, timerLabel);
 

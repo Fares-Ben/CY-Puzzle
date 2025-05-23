@@ -194,17 +194,24 @@ public class PuzzleSolver {
         System.out.println(decalageLeft);
         int n = firstCol.size();
 
+
         // Initialisation
         PieceSave[][] grid = new PieceSave[n][m];
         for (int j=0; j<m; j++) grid[0][j] = firstRow.get(j);
         for (int i=0; i<n; i++) grid[i][0] = firstCol.get(i);
-
+//barre de progression
+        int totalSteps = (n - 1) * (m - 1); // nombre total d’emplacements à traiter
+        int stepsDone = 0;
         // Remplissage intérieur en partant de en haut a gauche
         for (int i=1; i<n; i++) {
             for (int j=1; j<m; j++) {
                 PieceSave top = grid[i-1][j];
                 PieceSave left = grid[i][j-1];
-                
+                stepsDone++;
+        if (progressListener != null) {
+            double progress = (double) stepsDone / totalSteps * 0.5; // 50% max ici, pour la résolution
+            progressListener.onProgress(progress);
+        }
                 // si un voisin est manquant, on saute
                 if (top == null || left == null) {
                     //grid[i][j] = null;
@@ -381,6 +388,16 @@ public static void main(String[] args) {
         e.printStackTrace();
     }
 }
+public interface ProgressListener {
+    void onProgress(double progress); // 0.0 à 1.0
+}
+
+private ProgressListener progressListener;
+
+public void setProgressListener(ProgressListener listener) {
+    this.progressListener = listener;
+}
+
 }
 
 
