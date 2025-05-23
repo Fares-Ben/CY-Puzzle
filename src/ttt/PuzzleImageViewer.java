@@ -1,3 +1,4 @@
+package ttt;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -24,6 +25,11 @@ public class PuzzleImageViewer extends JFrame {
     // Cache des images et des informations des pièces
     private final Map<String, BufferedImage> pieceImages = new HashMap<>();
     private final Map<String, PieceSave> pieceData    = new HashMap<>();
+    
+    public static BufferedImage getAssembledImage(Path piecesFolder, PuzzleSolver solver, PuzzleSolver.PuzzleResult result) throws IOException {
+    PuzzleImageViewer viewer = new PuzzleImageViewer(piecesFolder, solver, result);
+    return viewer.assemblePuzzle();
+}
 
     public PuzzleImageViewer(Path piecesFolder,
                              String[][] puzzleMatrix,

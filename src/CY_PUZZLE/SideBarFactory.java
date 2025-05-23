@@ -1,7 +1,9 @@
 package CY_PUZZLE;
 
-import Res_Puzzle.PuzzleSolver;
-
+import ttt.PuzzleSolver;
+import ttt.PieceSave;
+import ttt.PuzzleAnalyzer;
+import ttt.PuzzleImageViewer;
 import javafx.stage.FileChooser;
 
 import javafx.scene.control.Button;
@@ -19,6 +21,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.imageio.ImageIO;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -41,7 +46,7 @@ import javafx.util.Duration;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 
-import CY_PUZZLE.Accueil;
+import CY_PUZZLE.Home;
 
 
 public class SideBarFactory {
@@ -88,7 +93,7 @@ public class SideBarFactory {
                 timerLabel.setText("Timer ⏱ : 0.00 secondes");
 
                 // Afficher les pièces dans la grille
-                Accueil.gridPane.getChildren().clear();
+                Home.gridPane.getChildren().clear();
                 try (Stream<Path> files = Files.list(selectedDir.toPath())) {
                     selectedPngFiles = files
                         .filter(p -> p.toString().toLowerCase().endsWith(".png"))
@@ -107,7 +112,7 @@ public class SideBarFactory {
                         imageView.setFitHeight(100);
                         imageView.setPreserveRatio(true);
 
-                        Accueil.gridPane.add(imageView, col, row);
+                        Home.gridPane.add(imageView, col, row);
                         
                         col++;
                         if (col >= maxCol) {
@@ -125,11 +130,11 @@ public class SideBarFactory {
                     selectedPngFiles.forEach(file -> 
                         fileList.append(file.getName()).append("\n")
                     );
-                    Accueil.piecesListArea.setText(fileList.toString());
+                    Home.piecesListArea.setText(fileList.toString());
                     
                 } catch (IOException ex) {
                     ex.printStackTrace();
-                    Accueil.piecesListArea.setText("Erreur lors de la lecture du dossier.");
+                    Home.piecesListArea.setText("Erreur lors de la lecture du dossier.");
                 }
             }
         });
@@ -139,7 +144,7 @@ startButton.setMaxWidth(Double.MAX_VALUE);
 
 startButton.setOnAction(event -> {
     if (selectedPuzzleDirectory == null) {
-        Accueil.piecesListArea.setText("⚠️ Veuillez d'abord choisir un dossier !");
+        Home.piecesListArea.setText("⚠️ Veuillez d'abord choisir un dossier !");
         return;
     }
 
@@ -162,49 +167,70 @@ startButton.setOnAction(event -> {
     loadingPopup.setScene(loadingScene);
     loadingPopup.show();
 
-    // Simule un petit délai avant de lancer la résolution
     PauseTransition pause = new PauseTransition(Duration.seconds(2));
     pause.setOnFinished(e -> {
-        loadingPopup.close(); // Ferme la popup
+        loadingPopup.close();
 
-        // Lancement de la résolution
-        Platform.runLater(() -> {
+        // Tâche de fond pour résoudre + assembler
+        new Thread(() -> {
             try {
-                long startTime = System.currentTimeMillis(); // ⏱️ Début chrono
+                long startTime = System.currentTimeMillis();
 
                 Path folderPath = selectedPuzzleDirectory.toPath();
                 PuzzleSolver solver = new PuzzleSolver(folderPath);
                 PuzzleSolver.PuzzleResult result = solver.solvePuzzle();
 
-                long endTime = System.currentTimeMillis(); // ⏱️ Fin chrono
+                BufferedImage assembledImage = PuzzleImageViewer.getAssembledImage(folderPath, solver, result);
+                Image fxImage = SwingFXUtils.toFXImage(assembledImage, null);
+
+                long endTime = System.currentTimeMillis();
                 double durationSeconds = (endTime - startTime) / 1000.0;
 
                 String[][] matrix = result.getMatrix();
 
-                // ✅ Affichage fusionné
-                FusionApp.showFusion(matrix, folderPath);
+                // Mise à jour UI dans le thread JavaFX
+                Platform.runLater(() -> {
+                    Home.fusionImageView.setImage(fxImage);
+                    Home.fusionImageView.setPreserveRatio(true);
+                    Home.fusionImageView.setSmooth(true);
+                    Home.fusionImageView.setFitWidth(600);
+                    Home.fusionImageView.setFitHeight(400);
+            Home.derniereImageAssemblee = assembledImage;// Pour la sauvegarde
 
-                // Affichage texte des pièces utilisées
-                StringBuilder sb = new StringBuilder("Résolution terminée !\n\n");
-                for (int r = 0; r < matrix.length; r++) {
-                    for (int c = 0; c < matrix[0].length; c++) {
-                        String pieceId = matrix[r][c];
-                        if (pieceId == null) pieceId = "----";
-                        sb.append(String.format("%-15s", pieceId));
+
+                    StringBuilder sb = new StringBuilder("Résolution terminée !\n\n");
+                    for (int r = 0; r < matrix.length; r++) {
+                        for (int c = 0; c < matrix[0].length; c++) {
+                            String pieceId = matrix[r][c];
+                            if (pieceId == null) pieceId = "----";
+                            sb.append(String.format("%-15s", pieceId));
+                        }
+                        sb.append("\n");
                     }
-                    sb.append("\n");
-                }
-                Accueil.piecesListArea.setText(sb.toString());
+                    Home.piecesListArea.setText(sb.toString());
 
-                // ⏱️ Affichage du temps dans le timerLabel
-                timerLabel.setText(String.format("Timer ⏱ : %.2f secondes", durationSeconds));
+                    timerLabel.setText(String.format("Timer ⏱ : %.2f secondes", durationSeconds));
+                });
+Platform.runLater(() -> {
+    Home.gridPane.getChildren().clear();  // <-- Vider la grille des pièces affichées avant affichage du puzzle final
+
+    Home.fusionImageView.setImage(fxImage);
+    Home.fusionImageView.setPreserveRatio(true);
+    Home.fusionImageView.setSmooth(true);
+    Home.fusionImageView.setFitWidth(600);
+    Home.fusionImageView.setFitHeight(400);
+
+    // Le reste de ta mise à jour (texte, timer...)
+});
 
             } catch (IOException ex) {
                 ex.printStackTrace();
-                Accueil.piecesListArea.setText("Erreur lors de la résolution.");
-                timerLabel.setText("⏱ Échec de la résolution.");
+                Platform.runLater(() -> {
+                    Home.piecesListArea.setText("Erreur lors de la résolution.");
+                    timerLabel.setText("⏱ Échec de la résolution.");
+                });
             }
-        });
+        }).start();
     });
 
     pause.play();
@@ -213,9 +239,15 @@ startButton.setOnAction(event -> {
 
 
 
+
 Button downloadButton = ButtonFactory.createButton("Télécharger l'image", Color.web("#2ecc71")); // Couleur verte, harmonieuse
 downloadButton.setMaxWidth(Double.MAX_VALUE);
 downloadButton.setOnAction(e -> {
+    if (Home.derniereImageAssemblee == null) {
+        Home.piecesListArea.setText("❌ Aucune image à sauvegarder.");
+        return;
+    }
+
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Enregistrer l'image fusionnée");
     fileChooser.setInitialFileName("puzzle_resolu.png");
@@ -223,15 +255,22 @@ downloadButton.setOnAction(e -> {
 
     File file = fileChooser.showSaveDialog(null);
     if (file != null) {
-        FusionApp.sauvegarderImageFusion(file);
-        Accueil.piecesListArea.setText("✅ Image sauvegardée : " + file.getName());
+        try {
+            ImageIO.write(Home.derniereImageAssemblee, "png", file);
+            Home.piecesListArea.setText("✅ Image sauvegardée : " + file.getName());
+        } catch (IOException ex) {
+            Home.piecesListArea.setText("❌ Erreur lors de la sauvegarde : " + ex.getMessage());
+            ex.printStackTrace();
+        }
     } else {
-        Accueil.piecesListArea.setText("❌ Sauvegarde annulée.");
+        Home.piecesListArea.setText("❌ Sauvegarde annulée.");
     }
 });
 
 
-    
+
+   
+
 
         
         

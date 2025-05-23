@@ -1,4 +1,5 @@
 package CY_PUZZLE;
+import java.awt.image.BufferedImage;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -13,7 +14,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class Accueil extends Application {
+public class Home extends Application {
+
+public static BufferedImage derniereImageAssemblee = null;
 
     private final int FRAME_WIDTH = 1200;
     private final int FRAME_HEIGHT = 800;

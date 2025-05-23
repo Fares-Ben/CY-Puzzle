@@ -1,3 +1,4 @@
+package ttt;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
