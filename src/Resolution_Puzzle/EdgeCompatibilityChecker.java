@@ -1,4 +1,7 @@
 package ttt;
+
+import Model.EdgeResult;
+
 public class EdgeCompatibilityChecker {
     public boolean areCompatible(EdgeResult e1, EdgeResult e2) {
         // 1) Types : on exclut les plats et on impose tenon/mortise
@@ -34,14 +37,14 @@ public class EdgeCompatibilityChecker {
 
             if (i == 1) {
                 // Segment central 
-                if (len <= 25)      tol = 5;
-                else if (len <= 50) tol = 4;
-                else if (len <= 100) tol = 3;
-                else                 tol = 2;
+                if (len <= 25)      tol = 7;
+                else if (len <= 50) tol = 6;
+                else if (len <= 100) tol = 5;
+                else                 tol = 3;
             } else {
                 // Segments 0 et 2
                 if (len <= 25)       tol = 16;
-                else if (len <= 50)  tol = 13;
+                else if (len <= 50)  tol = 14;
                 else if (len <= 100)  tol = 9;
                 else if (len <= 200)  tol = 5;
                 else                  tol = 4;
