@@ -253,9 +253,6 @@ public enum Side {
         }  
         }
 
-        for (int i : finalCoins) {
-            System.out.println(i);
-        }
         List<Point> currentEdge = top;
         int edgeIndex = 0;
 
@@ -503,7 +500,7 @@ public enum Side {
         // edge1 et edge2 sont deux instances de EdgeResult
         boolean ok = checker.areCompatible(edge1, edge2);
 
-        System.out.println(ok);
+        //System.out.println(ok);
     }   
     
 }

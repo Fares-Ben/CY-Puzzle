@@ -19,8 +19,6 @@ import Model.EdgeResult;
 import Model.PieceSave;
 import Factory.ProgressListener;
 
-
-
 /**
  * PuzzleSolver résout un puzzle jigsaw sans rotation des pièces.
  * Il détecte automatiquement la largeur (m) et la hauteur (n)
