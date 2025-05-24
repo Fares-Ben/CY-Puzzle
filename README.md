@@ -79,9 +79,10 @@ Each piece is processed using `PuzzleAnalyzer`, which:
 
 ```bash
 # Compile (assuming JavaFX libs are in /path/to/javafx-sdk/lib)
-javac --module-path /path/to/javafx-sdk/lib --add-modules javafx.controls -d out $(find . -name "*.java")
+javac --module-path "H:\Documents\javafx-sdk-21.0.7\lib" --add-modules javafx.controls,javafx.fxml,javafx.swing -d out src/CY_PUZZLE/*.java src/Factory/*.java src/Model/*.java src/Resolution_Puzzle/*.java
 
 # Run
-java --module-path /path/to/javafx-sdk/lib --add-modules javafx.controls -cp out CY_PUZZLE.Main
+java --module-path "H:\Documents\javafx-sdk-21.0.7\lib" --add-modules javafx.controls,javafx.fxml,javafx.swing -cp out CY_PUZZLE.Main
+
 
  
