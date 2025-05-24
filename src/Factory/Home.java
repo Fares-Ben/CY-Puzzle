@@ -1,3 +1,7 @@
+/**
+ * Home initializes and displays the main window of the application.
+ * It serves as the entry GUI container with layout and navigation.
+ */
 package Factory;
 
 import java.awt.image.BufferedImage;
@@ -15,22 +19,26 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * JavaFX main GUI container. Displays the interface to load, solve, and show puzzles.
+ */
 public class Home extends Application {
-
-public static BufferedImage derniereImageAssemblee = null;
+    /** Stores the last assembled image of the puzzle. */
+    public static BufferedImage derniereImageAssemblee = null;
 
     private final int FRAME_WIDTH = 1200;
     private final int FRAME_HEIGHT = 800;
     private final int GRID_SIZE = 4;
 
     private Label pieceLabel, timerLabel;
+    /** GridPane that holds the GUI layout of puzzle visualization. */
     public static GridPane gridPane;
 
-    // Nouveau champ pour afficher la liste des pièces
+    /** Displays a list of the pieces currently loaded or placed. */
     public static TextArea piecesListArea;
 
-    // **Déclaration statique pour l'image fusionnée**
-    public static ImageView fusionImageView; 
+    /** Displays the puzzle after assembly in the GUI. */
+    public static ImageView fusionImageView;
 
     @Override
     public void start(Stage primaryStage) {
@@ -83,6 +91,11 @@ public static BufferedImage derniereImageAssemblee = null;
         primaryStage.show();
     }
 
+    /**
+     * Main method to launch the JavaFX application manually.
+     * 
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }

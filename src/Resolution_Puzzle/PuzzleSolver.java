@@ -1,3 +1,8 @@
+/**
+ * PuzzleSolver class is responsible for solving a jigsaw puzzle.
+ * It analyzes edge compatibilities between pieces and assembles them accordingly.
+ * It can detect the width and height based on the outer pieces.
+ */
 package Resolution_Puzzle;
 
 import java.awt.image.BufferedImage;
@@ -32,7 +37,12 @@ public class PuzzleSolver {
     private List<Integer> decalageTop;
     private List<Integer> decalageLeft;
 
-    public PuzzleSolver(Path folder) {
+/**
+ * Constructs a PuzzleSolver for the specified puzzle folder.
+ *
+ * @param folder path to the folder containing the puzzle pieces
+ */
+public PuzzleSolver(Path folder) {
         this.folder = folder;
         this.checker = new EdgeCompatibilityChecker();
         this.tailleLeft = 0;
@@ -41,19 +51,33 @@ public class PuzzleSolver {
         this.decalageLeft = new ArrayList<>();
     }
 
-    // Getters pour les décalages
-    public List<Integer> getDecalageTop()   { return decalageTop; }
-    public List<Integer> getDecalageLeft()  { return decalageLeft; }
+/**
+ * @return list of vertical shifts (top edge) for each column
+ */
+public List<Integer> getDecalageTop()   { return decalageTop; }
+/**
+ * @return list of horizontal shifts (left edge) for each row
+ */
+public List<Integer> getDecalageLeft() { return decalageLeft; }
 
     // Getters pour la taille globale, si tu veux t’en servir
-    public int getTailleTop()  { return tailleTop; }
-    public int getTailleLeft() { return tailleLeft; }
+/**
+ * Gets the top size of the puzzle layout.
+ * @return number of cells at the top
+ */
+public int getTailleTop() { return tailleTop; }
+/**
+ * @return the total width of the final puzzle image
+ */
+public int getTailleLeft() { return tailleLeft; }
 
-    /**
-     * Charge toutes les images du dossier et analyse chaque pièce.
-     * Instancie PuzzleAnalyzer puis récupère le PieceSave.
-     */
-    public List<PieceSave> loadAllPieces() throws IOException {
+/**
+ * Loads all puzzle pieces from disk and analyzes them.
+ *
+ * @return list of PieceSave containing analyzed pieces
+ * @throws IOException if an error occurs during image reading
+ */
+public List<PieceSave> loadAllPieces() throws IOException {
         List<PieceSave> list = new ArrayList<>();
         try (var stream = Files.list(folder)) {
             for (Path path : (Iterable<Path>) stream::iterator) {
@@ -107,10 +131,13 @@ public class PuzzleSolver {
         return null;
     }
 
-    /**
-     * Résout le puzzle et renvoie une matrice des ids.
-     */
-    public PuzzleResult solvePuzzle() throws IOException {
+/**
+ * Attempts to solve the puzzle and return the result.
+ *
+ * @return PuzzleResult containing the solved matrix and unplaced pieces
+ * @throws IOException if a piece cannot be loaded or analyzed
+ */
+public PuzzleResult solvePuzzle() throws IOException {
         List<PieceSave> pieces = loadAllPieces();
 
         
@@ -352,21 +379,38 @@ public class PuzzleSolver {
         private final String[][] matrix;
         private final List<String> remainingIds;
 
-        public PuzzleResult(String[][] matrix, List<String> remainingIds) {
+/**
+ * Creates a new result of the puzzle solving process.
+ *
+ * @param matrix the solved puzzle matrix (IDs of placed pieces)
+ * @param remainingIds list of piece IDs that could not be placed
+ */
+public PuzzleResult(String[][] matrix, List<String> remainingIds) {
+
             this.matrix = matrix;
             this.remainingIds = remainingIds;
         }
 
-        public String[][] getMatrix() {
+/**
+ * @return matrix representing the final placement of all pieces
+ */
+public String[][] getMatrix() {
             return matrix;
         }
 
-        public List<String> getRemainingIds() {
+/**
+ * @return list of piece IDs that could not be placed
+ */
+public List<String> getRemainingIds() {
             return remainingIds;
         }
     }
 
-    /** Test console. */
+/**
+ * Main method for running the puzzle solver from command line.
+ *
+ * @param args command-line arguments, expects a folder path as the first argument
+ */
 public static void main(String[] args) {
     if (args.length < 1) {
         System.err.println("Usage: java PuzzleSolver <dossier>");
@@ -394,12 +438,27 @@ public static void main(String[] args) {
         e.printStackTrace();
     }
 }
+/**
+ * Interface to track puzzle solving progress.
+ * This is used to update the UI or logs with the current progress.
+ */
 public interface ProgressListener {
-    void onProgress(double progress); // 0.0 à 1.0
+    /**
+     * Called with a value between 0.0 and 1.0 to report current progress.
+     *
+     * @param progress progress percentage (0.0 to 1.0)
+     */
+    void onProgress(double progress);
 }
+
 
 private ProgressListener progressListener;
 
+/**
+ * Sets the listener used to track puzzle solving progress.
+ *
+ * @param listener the ProgressListener to be notified
+ */
 public void setProgressListener(ProgressListener listener) {
     this.progressListener = listener;
 }

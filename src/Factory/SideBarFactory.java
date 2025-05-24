@@ -1,3 +1,6 @@
+/**
+ * SideBarFactory builds the sidebar with buttons and controls used during the puzzle solving process.
+ */
 package Factory;
 
 import Factory.PuzzleImageViewer;
@@ -42,14 +45,25 @@ import Model.PieceSave; // Correct package for PieceSave
 import Resolution_Puzzle.PuzzleSolver;
 
 
+/**
+ * Factory class to generate the sidebar of the puzzle GUI.
+ */
 public class SideBarFactory {
 
     private static final double SIDEBAR_WIDTH = 300; // Largeur fixe de la barre latérale
     private static File selectedPuzzleDirectory = null;
     private static List<File> selectedPngFiles = List.of();
-    public static ImageView fusionImageView;
+/** ImageView to display the assembled puzzle inside the sidebar. */
+public static ImageView fusionImageView;
 
-    public static VBox createSideBarPanel(Label pieceLabel, Label timerLabel) {
+/**
+ * Creates the sidebar panel containing controls and labels.
+ *
+ * @param pieceLabel label for number of placed pieces
+ * @param timerLabel label for elapsed time
+ * @return VBox containing sidebar UI components
+ */
+public static VBox createSideBarPanel(Label pieceLabel, Label timerLabel) {
         VBox sideBarPanel = new VBox(10);
         sideBarPanel.setAlignment(Pos.TOP_CENTER);
         sideBarPanel.setPadding(new Insets(30));
@@ -276,15 +290,31 @@ downloadButton.setOnAction(e -> {
         return sideBarPanel;
     }
 
-    public static Image convertToFxImage(BufferedImage bf) {
+/**
+ * Converts a BufferedImage to a JavaFX Image.
+ *
+ * @param bf the BufferedImage to convert
+ * @return the JavaFX Image
+ */
+public static Image convertToFxImage(BufferedImage bf) {
         return SwingFXUtils.toFXImage(bf, null);
     }
 
-    public static File getSelectedPuzzleDirectory() {
+/**
+ * Opens a directory chooser dialog to select the puzzle folder.
+ *
+ * @return the selected folder
+ */
+public static File getSelectedPuzzleDirectory() {
         return selectedPuzzleDirectory;
     }
 
-    public static List<File> getSelectedPngFiles() {
+/**
+ * Opens a file chooser dialog to select PNG files.
+ *
+ * @return list of selected PNG files
+ */
+public static List<File> getSelectedPngFiles() {
         return selectedPngFiles;
     }
 }

@@ -1,10 +1,25 @@
+/**
+ * EdgeCompatibilityChecker compares two edges and returns a similarity score.
+ * It is used to determine if two puzzle pieces can be joined.
+ */
 package Resolution_Puzzle;
 
 import Model.EdgeResult;
 import Model.PieceSave;
 
+/**
+ * Compares two EdgeResult instances and determines if they are compatible.
+ */
 public class EdgeCompatibilityChecker {
+    /**
+     * Checks whether two edges are compatible.
+     * 
+     * @param e1 first edge result
+     * @param e2 second edge result
+     * @return true if the edges are considered compatible, false otherwise
+     */
     public boolean areCompatible(EdgeResult e1, EdgeResult e2) {
+
         // 1) Types : on exclut les plats et on impose tenon/mortise
         if (e1.type() == 2 || e2.type() == 2) return false;
         boolean tenonMortise = (e1.type() == 0 && e2.type() == 1)

@@ -1,3 +1,7 @@
+/**
+ * PuzzleAnalyzer analyzes each puzzle piece and extracts its edge contours.
+ * This helps in determining edge compatibility and orientation.
+ */
 package Resolution_Puzzle;
 
 import java.awt.Point;
@@ -17,16 +21,36 @@ import javax.imageio.ImageIO;
 import Model.EdgeResult;
 import Model.PieceSave;
 
+/**
+ * Analyzes a single puzzle piece to extract its edges and determine its position.
+ */
 public class PuzzleAnalyzer {
+/**
+ * Enum representing the four possible sides of a puzzle piece.
+ */
+public enum Side {
+    /** Top edge of the puzzle piece. */
+    TOP,
+    /** Right edge of the puzzle piece. */
+    RIGHT,
+    /** Bottom edge of the puzzle piece. */
+    BOTTOM,
+    /** Left edge of the puzzle piece. */
+    LEFT;
+}
 
-    public enum Side { TOP, RIGHT, BOTTOM, LEFT } // on va supp
     private final EdgeResult[] results = new EdgeResult[4]; // ok
     private final PieceSave piece;
     private int sizeEdge;
     private int[] finalCoins;
 
+   /**
+     * Constructs a PuzzleAnalyzer for a given image.
+     * 
+     * @param id   unique identifier for the piece
+     * @param img  the image of the puzzle piece
+     */
     public PuzzleAnalyzer(String id, BufferedImage img) {
-
         this.finalCoins = new int[8];
         // Le masque 
         boolean[][] mask = buildMask(img);
@@ -66,8 +90,12 @@ public class PuzzleAnalyzer {
         
     }
 
-    public PieceSave getPiece() {
-        return piece;
+    /**
+     * Returns the piece in its current analyzed state.
+     * 
+     * @return a PieceSave object with piece info
+     */
+    public PieceSave getPiece() {        return piece;
     }
 
     
@@ -440,6 +468,12 @@ public class PuzzleAnalyzer {
     }
 
     
+    /**
+     * Debugging main method to test the PuzzleAnalyzer.
+     * 
+     * @param args command-line arguments
+     * @throws IOException if image loading fails
+     */
     public static void main(String[] args) throws IOException {
 
 

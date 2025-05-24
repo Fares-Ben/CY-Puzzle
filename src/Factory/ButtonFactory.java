@@ -1,3 +1,7 @@
+/**
+ * ButtonFactory provides styled buttons used in the GUI.
+ * All buttons share consistent design defined in this factory.
+ */
 package Factory;
 
 import javafx.scene.control.Button;
@@ -8,9 +12,19 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+/**
+ * Factory class to create standardized buttons for the GUI.
+ */
 public class ButtonFactory {
-
+    /**
+     * Creates a styled JavaFX button with the given text and background color.
+     * 
+     * @param text  the text displayed on the button
+     * @param color the background color of the button
+     * @return a styled Button instance
+     */
     public static Button createButton(String text, Color color) {
+
         Button button = new Button(text);
         button.setFont(Font.font("Arial", 16));
         button.setTextFill(Color.WHITE);

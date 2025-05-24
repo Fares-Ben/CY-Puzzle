@@ -1,3 +1,7 @@
+/**
+ * StatsPanelFactory generates a panel showing puzzle statistics,
+ * including resolution time and number of pieces placed.
+ */
 package Factory;
 
 import javafx.geometry.Insets;
@@ -12,8 +16,18 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+/**
+ * Factory class to generate the statistics panel in the GUI.
+ */
 public class StatsPanelFactory {
 
+    /**
+     * Creates a VBox containing the puzzle stats (e.g., time and pieces).
+     *
+     * @param pieceLabel label for number of pieces placed
+     * @param timerLabel label for elapsed time
+     * @return VBox with statistical display
+     */
     public static VBox createStatsPanel(Label pieceLabel, Label timerLabel) {
         VBox statsPanel = new VBox(10);
         statsPanel.setPadding(new Insets(15));
