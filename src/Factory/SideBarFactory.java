@@ -68,10 +68,10 @@ public static VBox createSideBarPanel(Label pieceLabel, Label timerLabel) {
         sideBarPanel.setAlignment(Pos.TOP_CENTER);
         sideBarPanel.setPadding(new Insets(30));
         sideBarPanel.setPrefWidth(SIDEBAR_WIDTH);
-        sideBarPanel.setMinWidth(SIDEBAR_WIDTH);  // Forcer la largeur minimale
-        sideBarPanel.setMaxWidth(SIDEBAR_WIDTH);  // Forcer la largeur maximale
+        sideBarPanel.setMinWidth(SIDEBAR_WIDTH);  // Force the minimum width
+        sideBarPanel.setMaxWidth(SIDEBAR_WIDTH);  // Force the maximum width
 
-        // Fond dégradé
+        // Degraded background
         Stop[] stops = new Stop[]{
             new Stop(0, Color.web("#2980b9")),
             new Stop(1, Color.web("#2c3e50"))
@@ -87,7 +87,7 @@ public static VBox createSideBarPanel(Label pieceLabel, Label timerLabel) {
         directoryLabel.setWrapText(true);
         directoryLabel.setMaxWidth(Double.MAX_VALUE);
 
-        // Bouton pour choisir un dossier 
+        // Button to choose a folder 
         Button addFolderButton = ButtonFactory.createButton("Ajouter un dossier", Color.web("#3498db"));
         addFolderButton.setMaxWidth(Double.MAX_VALUE);
         addFolderButton.setOnAction(e -> {
@@ -99,7 +99,7 @@ public static VBox createSideBarPanel(Label pieceLabel, Label timerLabel) {
                 directoryLabel.setText("Dossier sélectionné : " + selectedDir.getName());
                 timerLabel.setText("Timer ⏱ : 0.00 secondes");
 
-                // Afficher les pièces dans la grille
+                // Show the parts in the grid
                 Home.gridPane.getChildren().clear();
                 try (Stream<Path> files = Files.list(selectedDir.toPath())) {
                     selectedPngFiles = files
@@ -107,10 +107,10 @@ public static VBox createSideBarPanel(Label pieceLabel, Label timerLabel) {
                         .map(Path::toFile)
                         .collect(Collectors.toList());
                     
-                    // Afficher chaque image dans la grille
+                    // Show each image in the grid
                     int col = 0;
                     int row = 0;
-                    int maxCol = 5; // Nombre de colonnes dans la grille
+                    int maxCol = 5; // Number of columns in the grid
 
                     for (File imgFile : selectedPngFiles) {
                         Image fxImage = new Image(imgFile.toURI().toString());
@@ -128,10 +128,10 @@ public static VBox createSideBarPanel(Label pieceLabel, Label timerLabel) {
                         }
                     }
 
-                    // Mettre à jour le label des pièces
+                    // Update the label of the parts
                     pieceLabel.setText("Nombre de pièces : " + selectedPngFiles.size());
                     
-                    // Afficher la liste des fichiers dans la zone de texte
+                    // Show the file list in the text box
                     StringBuilder fileList = new StringBuilder();
                     fileList.append("Pièces trouvées dans le dossier :\n\n");
                     selectedPngFiles.forEach(file -> 
@@ -145,7 +145,7 @@ public static VBox createSideBarPanel(Label pieceLabel, Label timerLabel) {
                 }
             }
         });
-        // Bouton pour lancer la résolution
+        // Button to launch the resolution
         Button startButton = ButtonFactory.createButton("Lancer la résolution", Color.web("#926871"));
 startButton.setMaxWidth(Double.MAX_VALUE);
 
@@ -155,7 +155,7 @@ startButton.setOnAction(event -> {
         return;
     }
 
-    // Création de la popup de chargement avec ProgressBar liée à la tâche
+    // Creation of the loading popup with progressbar linked to the task
     Stage loadingPopup = new Stage();
     loadingPopup.initModality(Modality.APPLICATION_MODAL);
     loadingPopup.setTitle("Chargement...");
@@ -172,7 +172,7 @@ startButton.setOnAction(event -> {
     loadingPopup.setScene(loadingScene);
     loadingPopup.show();
 
-    // Création d'une Task pour exécuter la résolution en arrière-plan
+    // Creation of a task to perform resolution in the background
     Task<Void> task = new Task<>() {
         @Override
         protected Void call() throws Exception {
@@ -185,10 +185,10 @@ startButton.setOnAction(event -> {
 
             PuzzleSolver.PuzzleResult result = solver.solvePuzzle();
 
-            // Vérification des pièces restantes
+            // Verification of the remaining parts
             List<String> remaining = result.getRemainingIds();
             if (!remaining.isEmpty()) {
-                // Affichage popup dans le thread UI
+                // 
                 Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.WARNING);
                     alert.setTitle("Puzzle non résolu");
@@ -197,7 +197,7 @@ startButton.setOnAction(event -> {
                         + "Pièces non placées : " + String.join(", ", remaining));
                     alert.showAndWait();
                 });
-                // On stoppe ici pour ne pas continuer l'assemblage
+                // We can return here if we want to show the remaining pieces
                 return null;
             }
 
@@ -237,10 +237,10 @@ startButton.setOnAction(event -> {
         }
     };
 
-    // Lie la barre de progression à la progression du task
+    // Binds the progression bar to the progression of the Task
     loadingBar.progressProperty().bind(task.progressProperty());
 
-    // Quand la tâche est terminée, ferme la popup
+    // When the task is over, closes the popup
     task.setOnSucceeded(e -> loadingPopup.close());
     task.setOnFailed(e -> {
         loadingPopup.close();
@@ -248,7 +248,7 @@ startButton.setOnAction(event -> {
         timerLabel.setText("⏱ Échec de la résolution.");
     });
 
-    // Lance la tâche dans un thread de fond
+    // Launches the task in a background thread
     Thread th = new Thread(task);
     th.setDaemon(true);
     th.start();
