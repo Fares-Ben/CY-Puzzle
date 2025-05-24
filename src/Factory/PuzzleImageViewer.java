@@ -1,13 +1,29 @@
-package ttt;
-import java.awt.*;
+package Factory;
+
+import Model.PieceSave; // Correct package for PieceSave
+import Resolution_Puzzle.PuzzleAnalyzer;
+import Resolution_Puzzle.PuzzleSolver;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
+import Factory.ProgressListener;
 
 /**
  * PuzzleImageViewer affiche directement et redimensionne l'image finale d'un puzzle résolu.

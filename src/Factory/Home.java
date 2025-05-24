@@ -1,13 +1,14 @@
-package CY_PUZZLE;
+package Factory;
+
 import java.awt.image.BufferedImage;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.ImageView; // <-- IMPORTANT : bon import ImageView JavaFX
+import javafx.scene.control.TextArea;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;

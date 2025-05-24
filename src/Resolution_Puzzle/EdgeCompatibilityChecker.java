@@ -1,6 +1,7 @@
-package ttt;
+package Resolution_Puzzle;
 
 import Model.EdgeResult;
+import Model.PieceSave;
 
 public class EdgeCompatibilityChecker {
     public boolean areCompatible(EdgeResult e1, EdgeResult e2) {

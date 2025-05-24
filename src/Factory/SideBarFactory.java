@@ -1,38 +1,45 @@
-package CY_PUZZLE;
+package Factory;
+
+import Factory.PuzzleImageViewer;
+import Factory.StatsPanelFactory;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import ttt.PuzzleSolver;
-import ttt.PieceSave;
-import ttt.PuzzleAnalyzer;
-import ttt.PuzzleImageViewer;
-import javafx.stage.FileChooser;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import java.nio.file.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.paint.CycleMethod;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.imageio.ImageIO;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
-import java.awt.image.BufferedImage;
-import javafx.embed.swing.SwingFXUtils;
-import java.io.File;
-import javafx.animation.PauseTransition;
-import javafx.application.Platform;
-import javafx.util.Duration;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
 
-import CY_PUZZLE.Home;
+import javax.imageio.ImageIO;
+
+import Model.PieceSave; // Correct package for PieceSave
+import Resolution_Puzzle.PuzzleSolver;
 
 
 public class SideBarFactory {

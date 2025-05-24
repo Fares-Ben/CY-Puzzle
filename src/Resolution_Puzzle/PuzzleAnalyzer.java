@@ -1,11 +1,21 @@
-package ttt;
+package Resolution_Puzzle;
+
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import javax.imageio.ImageIO;
 
+import Model.EdgeResult;
+import Model.PieceSave;
 
 public class PuzzleAnalyzer {
 

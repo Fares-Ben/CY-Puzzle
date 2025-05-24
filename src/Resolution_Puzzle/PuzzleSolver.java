@@ -1,14 +1,20 @@
-package ttt;
+package Resolution_Puzzle;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 import javax.imageio.ImageIO;
+
+import Model.EdgeResult;
+import Model.PieceSave;
+import Factory.ProgressListener;
+
+
 
 /**
  * PuzzleSolver résout un puzzle jigsaw sans rotation des pièces.
@@ -399,6 +405,5 @@ public void setProgressListener(ProgressListener listener) {
 }
 
 }
-
 
 //Si en partant de en haut a gauche il reste des possibilité, on part de en bas a droite et on teste de faire pareil.

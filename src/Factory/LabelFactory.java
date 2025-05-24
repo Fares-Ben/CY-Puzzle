@@ -1,4 +1,4 @@
-package CY_PUZZLE;
+package Factory;
 
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
