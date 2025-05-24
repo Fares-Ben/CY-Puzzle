@@ -84,5 +84,6 @@ javac --module-path "H:\Documents\javafx-sdk-21.0.7\lib" --add-modules javafx.co
 # Run
 java --module-path "H:\Documents\javafx-sdk-21.0.7\lib" --add-modules javafx.controls,javafx.fxml,javafx.swing -cp out CY_PUZZLE.Main
 
+java -cp out CY_PUZZLE.TerminalInterface
 
  
