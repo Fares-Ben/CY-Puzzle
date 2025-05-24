@@ -251,46 +251,6 @@ public PuzzleResult solvePuzzle() throws IOException {
                     continue;
                 }
                 
-
-                // On teste chaque pièce restante
-                /** 
-                for (PieceSave p : pieces) {
-                    EdgeResult topC  = p.edges()[Edge.TOP];
-                    EdgeResult leftC = p.edges()[Edge.LEFT];
-
-                    System.out.println("  * Candidate " + p.id());
-                    System.out.println("      topC.type=" + topC.type()
-                        + " lengths=" + Arrays.toString(topC.lengths())
-                        + " colors="  + Arrays.toString(topC.colors()));
-                    System.out.println("      leftC.type=" + leftC.type()
-                        + " lengths=" + Arrays.toString(leftC.lengths())
-                        + " colors="  + Arrays.toString(leftC.colors()));
-
-                    boolean compTop  = checker.areCompatible(neededBottom, topC);
-                    boolean compLeft = checker.areCompatible(neededRight,  leftC);
-                    System.out.println("      → compTop="  + compTop
-                        + "  compLeft=" + compLeft);
-                }
-                */
-                /** 
-                PieceSave match = null;
-                if (top != null && left != null) {
-                match = findAndRemove(pieces,
-                    p -> checker.areCompatible(top.edges()[BOTTOM], p.edges()[TOP])
-                    && checker.areCompatible(left.edges()[RIGHT], p.edges()[LEFT])
-                );
-                }
-                else if (top != null) {
-                match = findAndRemove(pieces,
-                    p -> checker.areCompatible(top.edges()[BOTTOM], p.edges()[TOP])
-                );
-                }
-                else if (left != null) {
-                match = findAndRemove(pieces,
-                    p -> checker.areCompatible(left.edges()[RIGHT], p.edges()[LEFT])
-                );
-                }
-                */
                 PieceSave match = findAndRemove(pieces,
                     p -> checker.areCompatible(top.edges()[Edge.BOTTOM], p.edges()[Edge.TOP])
                         && checker.areCompatible(left.edges()[Edge.RIGHT], p.edges()[Edge.LEFT])
@@ -311,48 +271,7 @@ public PuzzleResult solvePuzzle() throws IOException {
                 
             }
         }
-        /** 
-        // On part de en bas a gauche 
-        if(pieces.size() != 0){
-
-        //Récupe le coin en bas a droite
-        PieceSave corner_BR = find_BR_corner(pieces); // corner en haut a gauche
-        pieces.remove(corner_BR);
-
-        grid[n-1][m-1] = corner_BR;
-
-        // Remplissage intérieur en partant de en bas à droite
-        for (int i = n - 2; i >= 0; i--) {
-            for (int j = m - 2; j >= 0; j--) {
-                // 0) Si déjà rempli en première passe, on ne fait rien
-                if (grid[i][j] != null) continue;
-
-                PieceSave bottom = grid[i + 1][j];
-                PieceSave right  = grid[i][j + 1];
-                // si un voisin est manquant, on ne peut pas placer ici
-                if (bottom == null || right == null) {
-                    continue;
-                }
-                // 1) on cherche une pièce parfaite
-                PieceSave match = findAndRemove(pieces,
-                    p -> checker.areCompatible(bottom.edges()[Edge.TOP],    p.edges()[Edge.BOTTOM])
-                        && checker.areCompatible(right .edges()[Edge.LEFT],  p.edges()[Edge.RIGHT])
-                );
-                // 2) sinon, on accepte un accrochage partiel
-                if (match == null) {
-                    match = findAndRemove(pieces,
-                        p -> checker.areCompatible(bottom.edges()[Edge.TOP],    p.edges()[Edge.BOTTOM])
-                            || checker.areCompatible(right .edges()[Edge.LEFT],  p.edges()[Edge.RIGHT])
-                    );
-                }
-                if (match != null) {
-                    grid[i][j] = match;
-                }
-            }
-        }
-         
-        }
-        */
+        
         // Conversion en ids
         String[][] result = new String[n][m];
         for (int i=0; i<n; i++) {
