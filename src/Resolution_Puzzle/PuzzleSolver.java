@@ -221,10 +221,10 @@ public PuzzleResult solvePuzzle() throws IOException {
         }
 
 
-        System.out.println(tailleTop);
-        System.out.println(decalageTop);
-        System.out.println(tailleLeft);
-        System.out.println(decalageLeft);
+        //System.out.println(tailleTop);
+        //System.out.println(decalageTop);
+        //System.out.println(tailleLeft);
+        //System.out.println(decalageLeft);
         int n = firstCol.size();
 
 
@@ -360,11 +360,27 @@ public PuzzleResult solvePuzzle() throws IOException {
                 result[i][j] = (grid[i][j] != null) ? grid[i][j].id() : "";
             }
         }
+
         // Liste des pièces restantes
         List<String> remainingIds = new ArrayList<>();
         for (PieceSave p : pieces) {
             remainingIds.add(p.id());
         }
+
+        // Affichage automatique à chaque appel
+        for (String[] row : result) {
+            for (String id : row) {
+                System.out.print(id + " ");
+            }
+            System.out.println();
+        }
+        System.out.println("Pièces non placées :");
+        for (String id : remainingIds) {
+            System.out.print(id + " ");
+        }
+        System.out.println();
+
+
         return new PuzzleResult(result, remainingIds);
     }
 

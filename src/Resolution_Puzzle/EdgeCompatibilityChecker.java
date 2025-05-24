@@ -34,12 +34,12 @@ public class EdgeCompatibilityChecker {
         // 3) Longueurs strictement égales par segment
         int badCount = 0;
         for (int i = 0; i < 3; i++) {
-            System.out.println(Math.abs(l1[i] - l2m[i]));
+            //System.out.println(Math.abs(l1[i] - l2m[i]));
             if (Math.abs(l1[i] - l2m[i]) > 0) {
                 badCount++;
                 if (badCount > 1 || (Math.abs(l1[i] - l2m[i]) > 1)) {
                     // Deux couleurs hors tolérance = rejet
-                    System.out.println("Erreur taille");
+                    //System.out.println("Erreur taille");
                     return false;
                 }
             }
@@ -71,7 +71,7 @@ public class EdgeCompatibilityChecker {
                 else badCount++;
                 if (badCount > 2) {
                     // Deux couleurs hors tolérance = rejet
-                    System.out.println("Erreur couleur");
+                    //System.out.println("Erreur couleur");
                     return false;
                 }
             }
@@ -85,7 +85,7 @@ public class EdgeCompatibilityChecker {
 
         for (int i = 0; i < 3; i++) {
             if (nbrMaxPixel1[i] != nbrMaxPixel2[i]) {
-                System.out.println("Erreur pixel");
+                //System.out.println("Erreur pixel");
                 return false;
             }
         }

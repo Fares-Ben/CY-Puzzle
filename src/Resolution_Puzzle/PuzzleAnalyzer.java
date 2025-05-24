@@ -73,7 +73,7 @@ public enum Side {
 
         this.piece = new PieceSave(id, results.clone(),finalCoins);
         // Debug : print de chaque résultat
-        
+        /**
         System.out.println(id + " : ");
         for (Side side : Side.values()) {
             EdgeResult r = results[side.ordinal()];
@@ -87,7 +87,7 @@ public enum Side {
                 r.profondeur()
             );
         }
-        
+        */
     }
 
     /**
