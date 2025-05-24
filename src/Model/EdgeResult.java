@@ -1,17 +1,13 @@
 /**
- * EdgeResult represents the result of comparing two edges.
- * It contains the score and direction of a potential match.
+ * Represents the result of analyzing an edge of a puzzle piece.
+ * This includes the type of edge, its lengths, colors, depth, and pixel data.
  */
 package Model;
-/**
- * Represents the result of an edge extraction process on a puzzle piece.
- * Stores the edge contour data and orientation for matching.
- */
-public record EdgeResult(
 
-    int type,        // 0 = tenon, 1 = mortaise, 2 = bord plat
-    int[] lengths,   // {longPlatDébut, longEncoche, longPlatFin}
-    int[] colors,  // moyenne de couleur sur chaque segment
-    int profondeur,
-    int[] maxPixel
+public record EdgeResult(
+    int type,        // The type of the edge: 0 = tenon (protrusion), 1 = mortaise (indentation), 2 = flat edge
+    int[] lengths,   // Array storing lengths of different segments of the edge (e.g., flat start, notch, flat end)
+    int[] colors,    // Average color values for each segment of the edge, used for compatibility checks
+    int profondeur,  // Depth of the edge (e.g., how deep the mortaise or tenon is)
+    int[] maxPixel   // Array storing max pixel values for specific edge features (e.g., corners or notches)
 ) {}

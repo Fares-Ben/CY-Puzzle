@@ -1,16 +1,22 @@
-package CY_PUZZLE;
-import Factory.Home;
+package CY_PUZZLE; // Declares the package where this class belongs, ensuring proper organization of the project.
+
+import Factory.Home; // Imports the Home class from the Factory package. This class is responsible for launching the GUI.
+
 /**
  * Main launcher for the CY-Puzzle application.
+ * This class serves as the entry point for the program.
  */
 public class Main {
+
     /**
-     * Main method to launch the JavaFX application.
-     * 
-     * @param args command-line arguments
+     * The main method is the starting point of the application.
+     * It launches the JavaFX application by calling the `Home` class.
+     *
+     * @param args Command-line arguments (not used in this case).
      */
     public static void main(String[] args) {
-
-        Home.main(args); // Appelle la méthode main() de la classe qui étend Application
+        // Calls the main method of the Home class, which extends Application.
+        // This effectively starts the JavaFX GUI for the puzzle application.
+        Home.main(args);
     }
 }
