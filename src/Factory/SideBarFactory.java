@@ -1,10 +1,8 @@
 /**
- * SideBarFactory builds the sidebar with buttons and controls used during the puzzle-solving process.
- * It provides functionality for selecting a folder, starting the puzzle resolution, and downloading the final image.
+ * SideBarFactory builds the sidebar with buttons and controls used during the puzzle solving process.
  */
 package Factory;
 
-// Import necessary JavaFX and utility classes
 import Factory.PuzzleImageViewer;
 import Factory.StatsPanelFactory;
 import javafx.application.Platform;
@@ -43,92 +41,86 @@ import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
-import Model.PieceSave; // Represents metadata for puzzle pieces
-import Resolution_Puzzle.PuzzleSolver; // Handles puzzle-solving logic
+import Model.PieceSave; // Correct package for PieceSave
+import Resolution_Puzzle.PuzzleSolver;
+
 
 /**
  * Factory class to generate the sidebar of the puzzle GUI.
- * The sidebar includes buttons for selecting a folder, starting the puzzle-solving process, and downloading the final image.
  */
 public class SideBarFactory {
 
-    private static final double SIDEBAR_WIDTH = 300; // Fixed width of the sidebar
-    private static File selectedPuzzleDirectory = null; // Stores the selected folder containing puzzle pieces
-    private static List<File> selectedPngFiles = List.of(); // List of PNG files in the selected folder
+    private static final double SIDEBAR_WIDTH = 300; // Largeur fixe de la barre latérale
+    private static File selectedPuzzleDirectory = null;
+    private static List<File> selectedPngFiles = List.of();
+/** ImageView to display the assembled puzzle inside the sidebar. */
+public static ImageView fusionImageView;
 
-    /** ImageView to display the assembled puzzle inside the sidebar. */
-    public static ImageView fusionImageView;
-
-    /**
-     * Creates the sidebar panel containing controls and labels.
-     *
-     * @param pieceLabel Label to display the number of pieces loaded
-     * @param timerLabel Label to display the elapsed time during puzzle resolution
-     * @return VBox containing the sidebar UI components
-     */
-    public static VBox createSideBarPanel(Label pieceLabel, Label timerLabel) {
-        // Create a vertical layout for the sidebar with 10px spacing between elements
+/**
+ * Creates the sidebar panel containing controls and labels.
+ *
+ * @param pieceLabel label for number of placed pieces
+ * @param timerLabel label for elapsed time
+ * @return VBox containing sidebar UI components
+ */
+public static VBox createSideBarPanel(Label pieceLabel, Label timerLabel) {
         VBox sideBarPanel = new VBox(10);
-        sideBarPanel.setAlignment(Pos.TOP_CENTER); // Align content to the top center
-        sideBarPanel.setPadding(new Insets(30)); // Add padding around the content
-        sideBarPanel.setPrefWidth(SIDEBAR_WIDTH); // Set fixed width for the sidebar
-        sideBarPanel.setMinWidth(SIDEBAR_WIDTH);  // Enforce minimum width
-        sideBarPanel.setMaxWidth(SIDEBAR_WIDTH);  // Enforce maximum width
+        sideBarPanel.setAlignment(Pos.TOP_CENTER);
+        sideBarPanel.setPadding(new Insets(30));
+        sideBarPanel.setPrefWidth(SIDEBAR_WIDTH);
+        sideBarPanel.setMinWidth(SIDEBAR_WIDTH);  // Forcer la largeur minimale
+        sideBarPanel.setMaxWidth(SIDEBAR_WIDTH);  // Forcer la largeur maximale
 
-        // Set a gradient background for the sidebar
+        // Fond dégradé
         Stop[] stops = new Stop[]{
-            new Stop(0, Color.web("#2980b9")), // Light blue
-            new Stop(1, Color.web("#2c3e50")) // Dark blue
+            new Stop(0, Color.web("#2980b9")),
+            new Stop(1, Color.web("#2c3e50"))
         };
         LinearGradient gradient = new LinearGradient(0, 0, 1, 1, true, CycleMethod.NO_CYCLE, stops);
         sideBarPanel.setBackground(new Background(new BackgroundFill(gradient, CornerRadii.EMPTY, Insets.EMPTY)));
 
-        // Add a title label to the sidebar
         Label titleLabel = LabelFactory.createLabel("CY-PUZZLE", 30);
         titleLabel.setWrapText(true);
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
-        // Add a label to display the selected folder
         Label directoryLabel = LabelFactory.createLabel("Aucun dossier sélectionné", 15);
         directoryLabel.setWrapText(true);
         directoryLabel.setMaxWidth(Double.MAX_VALUE);
 
-        // Button to select a folder containing puzzle pieces
+        // Bouton pour choisir un dossier 
         Button addFolderButton = ButtonFactory.createButton("Ajouter un dossier", Color.web("#3498db"));
         addFolderButton.setMaxWidth(Double.MAX_VALUE);
         addFolderButton.setOnAction(e -> {
-            // Open a directory chooser dialog
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle("Choisir un dossier de puzzle");
             File selectedDir = directoryChooser.showDialog(null);
             if (selectedDir != null && selectedDir.isDirectory()) {
-                // Update the selected folder and display its name
                 selectedPuzzleDirectory = selectedDir;
                 directoryLabel.setText("Dossier sélectionné : " + selectedDir.getName());
                 timerLabel.setText("Timer ⏱ : 0.00 secondes");
 
-                // Clear the grid and display the puzzle pieces
+                // Afficher les pièces dans la grille
                 Home.gridPane.getChildren().clear();
                 try (Stream<Path> files = Files.list(selectedDir.toPath())) {
                     selectedPngFiles = files
-                        .filter(p -> p.toString().toLowerCase().endsWith(".png")) // Filter PNG files
+                        .filter(p -> p.toString().toLowerCase().endsWith(".png"))
                         .map(Path::toFile)
                         .collect(Collectors.toList());
-
-                    // Display each image in the grid
+                    
+                    // Afficher chaque image dans la grille
                     int col = 0;
                     int row = 0;
-                    int maxCol = 5; // Number of columns in the grid
+                    int maxCol = 5; // Nombre de colonnes dans la grille
 
                     for (File imgFile : selectedPngFiles) {
                         Image fxImage = new Image(imgFile.toURI().toString());
                         ImageView imageView = new ImageView(fxImage);
-                        imageView.setFitWidth(100); // Set image width
-                        imageView.setFitHeight(100); // Set image height
-                        imageView.setPreserveRatio(true); // Maintain aspect ratio
+                        imageView.setFitWidth(100);
+                        imageView.setFitHeight(100);
+                        imageView.setPreserveRatio(true);
 
-                        Home.gridPane.add(imageView, col, row); // Add image to the grid
-
+                        Home.gridPane.add(imageView, col, row);
+                        
                         col++;
                         if (col >= maxCol) {
                             col = 0;
@@ -136,190 +128,193 @@ public class SideBarFactory {
                         }
                     }
 
-                    // Update the piece count label
+                    // Mettre à jour le label des pièces
                     pieceLabel.setText("Nombre de pièces : " + selectedPngFiles.size());
-
-                    // Display the list of files in the text area
+                    
+                    // Afficher la liste des fichiers dans la zone de texte
                     StringBuilder fileList = new StringBuilder();
                     fileList.append("Pièces trouvées dans le dossier :\n\n");
-                    selectedPngFiles.forEach(file ->
+                    selectedPngFiles.forEach(file -> 
                         fileList.append(file.getName()).append("\n")
                     );
                     Home.piecesListArea.setText(fileList.toString());
-
+                    
                 } catch (IOException ex) {
                     ex.printStackTrace();
                     Home.piecesListArea.setText("Erreur lors de la lecture du dossier.");
                 }
             }
         });
-
-        // Button to start the puzzle resolution
+        // Bouton pour lancer la résolution
         Button startButton = ButtonFactory.createButton("Lancer la résolution", Color.web("#926871"));
-        startButton.setMaxWidth(Double.MAX_VALUE);
-        startButton.setOnAction(event -> {
-            if (selectedPuzzleDirectory == null) {
-                Home.piecesListArea.setText("⚠️ Veuillez d'abord choisir un dossier !");
-                return;
+startButton.setMaxWidth(Double.MAX_VALUE);
+
+startButton.setOnAction(event -> {
+    if (selectedPuzzleDirectory == null) {
+        Home.piecesListArea.setText("⚠️ Veuillez d'abord choisir un dossier !");
+        return;
+    }
+
+    // Création de la popup de chargement avec ProgressBar liée à la tâche
+    Stage loadingPopup = new Stage();
+    loadingPopup.initModality(Modality.APPLICATION_MODAL);
+    loadingPopup.setTitle("Chargement...");
+
+    VBox loadingBox = new VBox(10);
+    loadingBox.setAlignment(Pos.CENTER);
+    loadingBox.setPadding(new Insets(20));
+
+    ProgressBar loadingBar = new ProgressBar(0);
+    Label loadingLabel = new Label("Résolution du puzzle en cours...");
+
+    loadingBox.getChildren().addAll(loadingLabel, loadingBar);
+    Scene loadingScene = new Scene(loadingBox, 300, 100);
+    loadingPopup.setScene(loadingScene);
+    loadingPopup.show();
+
+    // Création d'une Task pour exécuter la résolution en arrière-plan
+    Task<Void> task = new Task<>() {
+        @Override
+        protected Void call() throws Exception {
+            Path folderPath = selectedPuzzleDirectory.toPath();
+            PuzzleSolver solver = new PuzzleSolver(folderPath);
+
+            solver.setProgressListener(progress -> updateProgress(progress, 1.0));
+
+            long startTime = System.currentTimeMillis();
+
+            PuzzleSolver.PuzzleResult result = solver.solvePuzzle();
+
+            // Vérification des pièces restantes
+            List<String> remaining = result.getRemainingIds();
+            if (!remaining.isEmpty()) {
+                // Affichage popup dans le thread UI
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Puzzle non résolu");
+                    alert.setHeaderText("Attention !");
+                    alert.setContentText("Le puzzle n'est pas complètement résolu.\n"
+                        + "Pièces non placées : " + String.join(", ", remaining));
+                    alert.showAndWait();
+                });
+                // On stoppe ici pour ne pas continuer l'assemblage
+                return null;
             }
 
-            // Show a loading popup with a progress bar
-            Stage loadingPopup = new Stage();
-            loadingPopup.initModality(Modality.APPLICATION_MODAL);
-            loadingPopup.setTitle("Chargement...");
-
-            VBox loadingBox = new VBox(10);
-            loadingBox.setAlignment(Pos.CENTER);
-            loadingBox.setPadding(new Insets(20));
-
-            ProgressBar loadingBar = new ProgressBar(0);
-            Label loadingLabel = new Label("Résolution du puzzle en cours...");
-
-            loadingBox.getChildren().addAll(loadingLabel, loadingBar);
-            Scene loadingScene = new Scene(loadingBox, 300, 100);
-            loadingPopup.setScene(loadingScene);
-            loadingPopup.show();
-
-            // Create a background task to solve the puzzle
-            Task<Void> task = new Task<>() {
-                @Override
-                protected Void call() throws Exception {
-                    Path folderPath = selectedPuzzleDirectory.toPath();
-                    PuzzleSolver solver = new PuzzleSolver(folderPath);
-
-                    solver.setProgressListener(progress -> updateProgress(progress, 1.0));
-
-                    long startTime = System.currentTimeMillis();
-
-                    PuzzleSolver.PuzzleResult result = solver.solvePuzzle();
-
-                    // Check for remaining pieces
-                    List<String> remaining = result.getRemainingIds();
-                    if (!remaining.isEmpty()) {
-                        Platform.runLater(() -> {
-                            Alert alert = new Alert(Alert.AlertType.WARNING);
-                            alert.setTitle("Puzzle non résolu");
-                            alert.setHeaderText("Attention !");
-                            alert.setContentText("Le puzzle n'est pas complètement résolu.\n"
-                                + "Pièces non placées : " + String.join(", ", remaining));
-                            alert.showAndWait();
-                        });
-                        return null;
-                    }
-
-                    BufferedImage assembledImage = PuzzleImageViewer.getAssembledImageWithProgress(folderPath, solver, result, progress -> {
-                        updateProgress(progress, 1.0);
-                    });
-
-                    long endTime = System.currentTimeMillis();
-                    double durationSeconds = (endTime - startTime) / 1000.0;
-
-                    Image fxImage = SwingFXUtils.toFXImage(assembledImage, null);
-
-                    Platform.runLater(() -> {
-                        Home.gridPane.getChildren().clear();
-                        Home.fusionImageView.setImage(fxImage);
-                        Home.fusionImageView.setPreserveRatio(true);
-                        Home.fusionImageView.setSmooth(true);
-                        Home.fusionImageView.setFitWidth(600);
-                        Home.fusionImageView.setFitHeight(400);
-                        Home.derniereImageAssemblee = assembledImage;
-
-                        String[][] matrix = result.getMatrix();
-                        StringBuilder sb = new StringBuilder("Résolution terminée !\n\n");
-                        for (int r = 0; r < matrix.length; r++) {
-                            for (int c = 0; c < matrix[0].length; c++) {
-                                String pieceId = matrix[r][c];
-                                if (pieceId == null) pieceId = "----";
-                                sb.append(String.format("%-15s", pieceId));
-                            }
-                            sb.append("\n");
-                        }
-                        Home.piecesListArea.setText(sb.toString());
-
-                        timerLabel.setText(String.format("Timer ⏱ : %.2f secondes", durationSeconds));
-                    });
-                    return null;
-                }
-            };
-
-            // Bind the progress bar to the task's progress
-            loadingBar.progressProperty().bind(task.progressProperty());
-
-            // Close the popup when the task is complete
-            task.setOnSucceeded(e -> loadingPopup.close());
-            task.setOnFailed(e -> {
-                loadingPopup.close();
-                Home.piecesListArea.setText("❌ Erreur lors de la résolution.");
-                timerLabel.setText("⏱ Échec de la résolution.");
+            BufferedImage assembledImage = PuzzleImageViewer.getAssembledImageWithProgress(folderPath, solver, result, progress -> {
+                updateProgress(progress, 1.0);
             });
 
-            // Start the task in a background thread
-            Thread th = new Thread(task);
-            th.setDaemon(true);
-            th.start();
-        });
+            long endTime = System.currentTimeMillis();
+            double durationSeconds = (endTime - startTime) / 1000.0;
 
-        // Button to download the final assembled image
-        Button downloadButton = ButtonFactory.createButton("Télécharger l'image", Color.web("#2ecc71"));
-        downloadButton.setMaxWidth(Double.MAX_VALUE);
-        downloadButton.setOnAction(e -> {
-            if (Home.derniereImageAssemblee == null) {
-                Home.piecesListArea.setText("❌ Aucune image à sauvegarder.");
-                return;
-            }
+            Image fxImage = SwingFXUtils.toFXImage(assembledImage, null);
 
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Enregistrer l'image fusionnée");
-            fileChooser.setInitialFileName("puzzle_resolu.png");
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Fichier PNG", "*.png"));
+            Platform.runLater(() -> {
+                Home.gridPane.getChildren().clear();
+                Home.fusionImageView.setImage(fxImage);
+                Home.fusionImageView.setPreserveRatio(true);
+                Home.fusionImageView.setSmooth(true);
+                Home.fusionImageView.setFitWidth(600);
+                Home.fusionImageView.setFitHeight(400);
+                Home.derniereImageAssemblee = assembledImage;
 
-            File file = fileChooser.showSaveDialog(null);
-            if (file != null) {
-                try {
-                    ImageIO.write(Home.derniereImageAssemblee, "png", file);
-                    Home.piecesListArea.setText("✅ Image sauvegardée : " + file.getName());
-                } catch (IOException ex) {
-                    Home.piecesListArea.setText("❌ Erreur lors de la sauvegarde : " + ex.getMessage());
-                    ex.printStackTrace();
+                String[][] matrix = result.getMatrix();
+                StringBuilder sb = new StringBuilder("Résolution terminée !\n\n");
+                for (int r = 0; r < matrix.length; r++) {
+                    for (int c = 0; c < matrix[0].length; c++) {
+                        String pieceId = matrix[r][c];
+                        if (pieceId == null) pieceId = "----";
+                        sb.append(String.format("%-15s", pieceId));
+                    }
+                    sb.append("\n");
                 }
-            } else {
-                Home.piecesListArea.setText("❌ Sauvegarde annulée.");
-            }
-        });
+                Home.piecesListArea.setText(sb.toString());
 
-        // Add all components to the sidebar
+                timerLabel.setText(String.format("Timer ⏱ : %.2f secondes", durationSeconds));
+            });
+            return null;
+        }
+    };
+
+    // Lie la barre de progression à la progression du task
+    loadingBar.progressProperty().bind(task.progressProperty());
+
+    // Quand la tâche est terminée, ferme la popup
+    task.setOnSucceeded(e -> loadingPopup.close());
+    task.setOnFailed(e -> {
+        loadingPopup.close();
+        Home.piecesListArea.setText("❌ Erreur lors de la résolution.");
+        timerLabel.setText("⏱ Échec de la résolution.");
+    });
+
+    // Lance la tâche dans un thread de fond
+    Thread th = new Thread(task);
+    th.setDaemon(true);
+    th.start();
+});
+
+
+
+Button downloadButton = ButtonFactory.createButton("Télécharger l'image", Color.web("#2ecc71")); // Couleur verte, harmonieuse
+downloadButton.setMaxWidth(Double.MAX_VALUE);
+downloadButton.setOnAction(e -> {
+    if (Home.derniereImageAssemblee == null) {
+        Home.piecesListArea.setText("❌ Aucune image à sauvegarder.");
+        return;
+    }
+
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Enregistrer l'image fusionnée");
+    fileChooser.setInitialFileName("puzzle_resolu.png");
+    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Fichier PNG", "*.png"));
+
+    File file = fileChooser.showSaveDialog(null);
+    if (file != null) {
+        try {
+            ImageIO.write(Home.derniereImageAssemblee, "png", file);
+            Home.piecesListArea.setText("✅ Image sauvegardée : " + file.getName());
+        } catch (IOException ex) {
+            Home.piecesListArea.setText("❌ Erreur lors de la sauvegarde : " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    } else {
+        Home.piecesListArea.setText("❌ Sauvegarde annulée.");
+    }
+});
+
         VBox statsPanel = StatsPanelFactory.createStatsPanel(pieceLabel, timerLabel);
+
         sideBarPanel.getChildren().addAll(titleLabel, addFolderButton, directoryLabel, startButton, downloadButton, statsPanel);
 
         return sideBarPanel;
     }
 
-    /**
-     * Converts a BufferedImage to a JavaFX Image.
-     *
-     * @param bf the BufferedImage to convert
-     * @return the JavaFX Image
-     */
-    public static Image convertToFxImage(BufferedImage bf) {
+/**
+ * Converts a BufferedImage to a JavaFX Image.
+ *
+ * @param bf the BufferedImage to convert
+ * @return the JavaFX Image
+ */
+public static Image convertToFxImage(BufferedImage bf) {
         return SwingFXUtils.toFXImage(bf, null);
     }
 
-    /**
-     * Opens a directory chooser dialog to select the puzzle folder.
-     *
-     * @return the selected folder
-     */
-    public static File getSelectedPuzzleDirectory() {
+/**
+ * Opens a directory chooser dialog to select the puzzle folder.
+ *
+ * @return the selected folder
+ */
+public static File getSelectedPuzzleDirectory() {
         return selectedPuzzleDirectory;
     }
 
-    /**
-     * Opens a file chooser dialog to select PNG files.
-     *
-     * @return list of selected PNG files
-     */
-    public static List<File> getSelectedPngFiles() {
+/**
+ * Opens a file chooser dialog to select PNG files.
+ *
+ * @return list of selected PNG files
+ */
+public static List<File> getSelectedPngFiles() {
         return selectedPngFiles;
     }
 }

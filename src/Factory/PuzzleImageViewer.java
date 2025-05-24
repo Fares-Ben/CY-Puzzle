@@ -1,12 +1,16 @@
 /**
- * PuzzleImageViewer is a Swing-based component that displays the fully assembled puzzle.
- * It handles loading puzzle pieces, assembling them into a final image, and displaying the result.
+ * PuzzleImageViewer is a Swing component that displays the fully assembled puzzle.
+ * <p>
+ * It supports zooming, resizing, and centering the final image to fit the window.
+ * This class also includes methods to retrieve the puzzle image with or without a progress listener.
+ * </p>
  */
+
 package Factory;
 
-import Model.PieceSave; // Represents metadata for each puzzle piece
-import Resolution_Puzzle.PuzzleAnalyzer; // Analyzes individual puzzle pieces
-import Resolution_Puzzle.PuzzleSolver; // Solves the puzzle by arranging pieces
+import Model.PieceSave; // Correct package for PieceSave
+import Resolution_Puzzle.PuzzleAnalyzer;
+import Resolution_Puzzle.PuzzleSolver;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -33,119 +37,118 @@ import Factory.ProgressListener;
  * JavaFX component for displaying and manipulating the assembled puzzle image.
  */
 public class PuzzleImageViewer extends JFrame {
-    // Path to the folder containing puzzle piece images
-    private final Path piecesFolder;
+/** Path to the folder containing the puzzle piece images. */
+private final Path piecesFolder;
+/** Matrix containing the layout of piece IDs in their solved positions. */
+private final String[][] puzzleMatrix;    
+/** Total width of the assembled puzzle image. */
+private final int tailleLeft;
+/** Total height of the assembled puzzle image. */
+private final int tailleTop;
 
-    // Matrix representing the solved puzzle layout (IDs of pieces in their positions)
-    private final String[][] puzzleMatrix;
 
-    // Dimensions of the final assembled puzzle
-    private final int tailleLeft; // Total width
-    private final int tailleTop;  // Total height
-
-    // Cache for storing loaded puzzle piece images
-    private final Map<String, BufferedImage> pieceImages = new HashMap<>();
-
-    // Metadata for each puzzle piece (e.g., edge details, corner positions)
-    private final Map<String, PieceSave> pieceData = new HashMap<>();
-
-    // Maximum display dimensions for the final image
+    // Taille maximale d'affichage
     private static final int MAX_DISPLAY_WIDTH = 800;
     private static final int MAX_DISPLAY_HEIGHT = 600;
 
-    /**
-     * Constructor to initialize the viewer with puzzle data.
-     * 
-     * @param piecesFolder Path to the folder containing puzzle pieces
-     * @param puzzleMatrix Solved matrix of piece IDs
-     * @param tailleTop Total height of the puzzle
-     * @param tailleLeft Total width of the puzzle
-     */
-    public PuzzleImageViewer(Path piecesFolder, String[][] puzzleMatrix, int tailleTop, int tailleLeft) {
+/** Map caching the loaded images of each puzzle piece, keyed by filename. */
+private final Map<String, BufferedImage> pieceImages = new HashMap<>();
+
+/** Map storing metadata for each puzzle piece, including corner positions. */
+private final Map<String, PieceSave> pieceData = new HashMap<>();
+    
+    
+
+/**
+ * Constructs a new PuzzleImageViewer with the specified puzzle data.
+ *
+ * @param piecesFolder the folder containing all puzzle pieces as images
+ * @param puzzleMatrix the solved matrix containing the piece IDs in their positions
+ * @param tailleTop the total height of the final puzzle
+ * @param tailleLeft the total width of the final puzzle
+ */
+    public PuzzleImageViewer(Path piecesFolder, 
+    String[][] puzzleMatrix, 
+    int tailleTop, 
+    int tailleLeft) { 
+
         this.piecesFolder = piecesFolder;
         this.puzzleMatrix = puzzleMatrix;
-        this.tailleTop = tailleTop;
-        this.tailleLeft = tailleLeft;
-        initializeFrame(); // Sets up the Swing frame and loads the puzzle
+        this.tailleTop    = tailleTop;
+        this.tailleLeft   = tailleLeft;
+        initializeFrame();
     }
 
-    /**
-     * Alternative constructor that uses a PuzzleSolver and its result.
-     * This simplifies initialization when solving the puzzle programmatically.
-     */
-    public PuzzleImageViewer(Path piecesFolder, PuzzleSolver solver, PuzzleSolver.PuzzleResult result) {
-        this(piecesFolder, result.getMatrix(), solver.getTailleTop(), solver.getTailleLeft());
+/**
+ * Alternative constructor using a PuzzleSolver and its result.
+ *
+ * @param piecesFolder the folder containing the pieces
+ * @param solver the puzzle solver instance used
+ * @param result the result of the puzzle solving
+ */
+public PuzzleImageViewer(Path piecesFolder, PuzzleSolver solver, PuzzleSolver.PuzzleResult result) {
+        this(piecesFolder,
+             result.getMatrix(),
+             solver.getTailleTop(),
+             solver.getTailleLeft());
     }
 
-    /**
-     * Sets up the Swing frame, loads puzzle data, and displays the assembled image.
-     */
     private void initializeFrame() {
-        setTitle("Puzzle Résolu"); // Window title
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Close behavior
+        setTitle("Puzzle Résolu");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         try {
-            loadPiecesData(); // Loads all puzzle piece images and metadata
-            BufferedImage finalImage = assemblePuzzle(null); // Assembles the puzzle
-            BufferedImage displayImage = getScaledInstance(finalImage, MAX_DISPLAY_WIDTH, MAX_DISPLAY_HEIGHT); // Scales the image for display
+            loadPiecesData();
+            BufferedImage finalImage = assemblePuzzle(null);
+            // Redimensionnement proportionnel
+            BufferedImage displayImage = getScaledInstance(finalImage,
+                MAX_DISPLAY_WIDTH, MAX_DISPLAY_HEIGHT);
 
-            // Adds the scaled image to the frame
             JLabel imageLabel = new JLabel(new ImageIcon(displayImage));
             getContentPane().add(imageLabel, BorderLayout.CENTER);
 
-            pack(); // Adjusts the frame size to fit the content
-            setResizable(false); // Prevents resizing
-            setLocationRelativeTo(null); // Centers the window on the screen
+            pack();
+            setResizable(false);
+            setLocationRelativeTo(null);
         } catch (IOException e) {
-            // Displays an error message if loading fails
-            JOptionPane.showMessageDialog(this, "Erreur lors du chargement des images: " + e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                "Erreur lors du chargement des images: " + e.getMessage(),
+                "Erreur", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    /**
-     * Loads all puzzle piece images and analyzes their metadata.
-     * Stores the images and metadata in `pieceImages` and `pieceData`.
-     */
     private void loadPiecesData() throws IOException {
         try (var stream = Files.list(piecesFolder)) {
             for (Path path : (Iterable<Path>) stream::iterator) {
-                if (!Files.isRegularFile(path)) continue; // Skip non-files
-                BufferedImage img = ImageIO.read(path.toFile()); // Load the image
+                if (!Files.isRegularFile(path)) continue;
+                BufferedImage img = ImageIO.read(path.toFile());
                 if (img != null) {
                     String filename = path.getFileName().toString();
-                    pieceImages.put(filename, img); // Cache the image
-                    PuzzleAnalyzer analyzer = new PuzzleAnalyzer(filename, img); // Analyze the piece
-                    PieceSave piece = analyzer.getPiece(); // Get metadata
-                    if (piece != null) pieceData.put(filename, piece); // Cache metadata
+                    pieceImages.put(filename, img);
+                    PuzzleAnalyzer analyzer = new PuzzleAnalyzer(filename, img);
+                    PieceSave piece = analyzer.getPiece();
+                    if (piece != null) pieceData.put(filename, piece);
                 }
             }
         }
     }
 
-    /**
-     * Assembles the puzzle by arranging the pieces based on the solved matrix.
-     * 
-     * @param listener Optional progress listener for tracking assembly progress
-     * @return The final assembled puzzle as a BufferedImage
-     */
     private BufferedImage assemblePuzzle(ProgressListener listener) {
-        int rows = puzzleMatrix.length; // Number of rows in the puzzle
-        int cols = puzzleMatrix[0].length; // Number of columns in the puzzle
-        BufferedImage finalImage = new BufferedImage(tailleTop, tailleLeft, BufferedImage.TYPE_INT_RGB); // Create a blank canvas
-        Graphics2D g2d = finalImage.createGraphics(); // Graphics context for drawing
+        int rows = puzzleMatrix.length;
+        int cols = puzzleMatrix[0].length;
+        BufferedImage finalImage = new BufferedImage(tailleTop, tailleLeft, BufferedImage.TYPE_INT_RGB);
+    Graphics2D g2d = finalImage.createGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2d.setColor(Color.WHITE); // Background color
-        g2d.fillRect(0, 0, tailleTop, tailleLeft); // Fill the canvas with white
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, tailleTop, tailleLeft);
 
-        // Arrays to store the positions of each piece
         int[][] posX = new int[rows][cols];
         int[][] posY = new int[rows][cols];
 
-        // Calculate positions for the first row and column
         // Coin (0,0)
         posX[0][0] = 0;
         posY[0][0] = 0;
 
-        // 1) First line
+        // 1) Première ligne
         for (int c = 1; c < cols; c++) {
             String prevId = puzzleMatrix[0][c - 1];
             int[] prev    = pieceData.get(prevId).coins();
@@ -153,7 +156,7 @@ public class PuzzleImageViewer extends JFrame {
             posY[0][c]    = posY[0][0];
         }
 
-        // 2) First column
+        // 2) Première colonne
         for (int r = 1; r < rows; r++) {
             String aboveId = puzzleMatrix[r - 1][0];
             int[] above    = pieceData.get(aboveId).coins();
@@ -161,7 +164,7 @@ public class PuzzleImageViewer extends JFrame {
             posX[r][0]     = posX[0][0];
         }
 
-        // 3) rest of the grid
+        // 3) Reste de la grille
         for (int r = 1; r < rows; r++) {
             for (int c = 1; c < cols; c++) {
                 String leftId  = puzzleMatrix[r][c - 1];
@@ -172,23 +175,21 @@ public class PuzzleImageViewer extends JFrame {
                 posY[r][c]     = posY[r - 1][c] + (above[7] - above[1]) + 1;
             }
         }
-        //for the progress bar
+        //pour la barre de progression
     int totalPieces = rows * cols;
     int piecesDrawn = 0;
-        // Draw the pieces
+        // Dessin des pièces
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 String id = puzzleMatrix[r][c];
                 BufferedImage img = pieceImages.get(id);
                 PieceSave info    = pieceData.get(id);
                 if (img != null && info != null) {
-                    // Draw the piece at the calculated position
                     g2d.drawImage(img,
                         posX[r][c] - info.coins()[0],
                         posY[r][c] - info.coins()[1],
                         null);
                 } else {
-                    // Draw a placeholder if the piece is missing
                     g2d.setColor(Color.RED);
                     g2d.fillRect(posX[r][c], posY[r][c], 100, 100);
                     g2d.setColor(Color.BLACK);
@@ -197,91 +198,69 @@ public class PuzzleImageViewer extends JFrame {
                         posY[r][c] + 50);
                 }
                 piecesDrawn++;
-                if (listener != null) {
-                    // Update progress if a listener is provided
-                    double progressStep = 0.5 / (totalPieces * 3);
-                    double progress = 0.5 + progressStep * piecesDrawn;
-                    listener.onProgress(progress);
+            if (listener != null) {
+            double progressStep = 0.5 / (totalPieces * 3);
+            double progress = 0.5 + progressStep * piecesDrawn;
+            listener.onProgress(progress);
 
-                    // for progress bar
-                    try {
-                        Thread.sleep(5);  // 5 ms
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
+            // Pause minime pour que la barre ait le temps de s’afficher
+            try {
+                Thread.sleep(5);  // 5 ms, à ajuster (plus grand = plus lent)
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }
-        g2d.dispose(); // Release resources
+            }
+        }
+        g2d.dispose();
         return finalImage;
     }
 
     /**
-     * Scales the final image to fit within the specified dimensions while maintaining the aspect ratio.
+     * Retourne une version redimensionnée de l'image d'origine,
+     * tout en conservant le ratio, pour tenir dans maxWidth×maxHeight.
      */
     private BufferedImage getScaledInstance(BufferedImage img, int maxWidth, int maxHeight) {
         int w = img.getWidth();
         int h = img.getHeight();
-        double scale = Math.min((double) maxWidth / w, (double) maxHeight / h); // Calculate the scaling factor
+        double scale = Math.min((double) maxWidth / w, (double) maxHeight / h);
         int newW = (int) (w * scale);
         int newH = (int) (h * scale);
-        Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH); // Scale the image
+        Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
         BufferedImage resized = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2 = resized.createGraphics();
-        g2.drawImage(tmp, 0, 0, null); // Draw the scaled image
+        g2.drawImage(tmp, 0, 0, null);
         g2.dispose();
         return resized;
     }
+/**
+ * Launches a GUI window displaying the solved puzzle.
+ *
+ * @param piecesFolder path to the folder containing the puzzle pieces
+ * @param solver the solver instance used for assembling the puzzle
+ * @param result the result containing the solved matrix
+ */
+public static void displayPuzzle(Path piecesFolder, PuzzleSolver solver, PuzzleSolver.PuzzleResult result) { 
 
-    /**
-     * Displays the solved puzzle in a new window.
-     * This is the main entry point for viewing the puzzle after solving.
-     */
-    public static void displayPuzzle(Path piecesFolder, PuzzleSolver solver, PuzzleSolver.PuzzleResult result) {
         SwingUtilities.invokeLater(() -> {
             try {
                 PuzzleImageViewer v = new PuzzleImageViewer(piecesFolder, solver, result);
-                v.setVisible(true); // Show the window
+                v.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Erreur lors de l'affichage: " + e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null,
+                    "Erreur lors de l'affichage: " + e.getMessage(),
+                    "Erreur", JOptionPane.ERROR_MESSAGE);
             }
         });
     }
 
-    /**
-     * Builds and returns the final puzzle image, without displaying it.
-     *
-     * @param piecesFolder the folder containing the pieces
-     * @param solver the solver used to assemble the puzzle
-     * @param result the result object containing the matrix
-     * @return a BufferedImage of the assembled puzzle
-     * @throws IOException if an image can't be loaded
-     */
-    public static BufferedImage getAssembledImage(Path piecesFolder, PuzzleSolver solver, PuzzleSolver.PuzzleResult result) throws IOException {
-        return getAssembledImageWithProgress(piecesFolder, solver, result, null);
-    }
-
-    /**
-     * Builds and returns the final puzzle image, displaying a progress bar during the process.
-     *
-     * @param piecesFolder the folder containing the pieces
-     * @param solver the solver used to assemble the puzzle
-     * @param result the result object containing the matrix
-     * @param listener optional listener to track progress
-     * @return a BufferedImage of the assembled puzzle
-     * @throws IOException if an image can't be loaded
-     */
-    public static BufferedImage getAssembledImageWithProgress(Path piecesFolder, PuzzleSolver solver, PuzzleSolver.PuzzleResult result, ProgressListener listener) throws IOException {
-        PuzzleImageViewer viewer = new PuzzleImageViewer(piecesFolder, solver, result);
-        return viewer.assemblePuzzle(listener);
-    }
-
-    /**
-     * Main method for testing the viewer from the command line.
-     * Expects the path to the folder containing puzzle pieces as an argument.
-     */
-    public static void main(String[] args) {
+/**
+ * Entry point for standalone usage to view a puzzle directly from the console.
+ *
+ * @param args expects one argument: the path to the folder containing pieces
+ */
+public static void main(String[] args) { 
         if (args.length < 1) {
             System.err.println("Usage: java PuzzleImageViewer <dossier_pieces>");
             System.exit(1);
@@ -292,11 +271,41 @@ public class PuzzleImageViewer extends JFrame {
                 System.err.println("Répertoire invalide: " + folder);
                 System.exit(2);
             }
-            PuzzleSolver solver = new PuzzleSolver(folder); // Solve the puzzle
+            PuzzleSolver solver = new PuzzleSolver(folder);
             PuzzleSolver.PuzzleResult result = solver.solvePuzzle();
-            displayPuzzle(folder, solver, result); // Display the result
+            displayPuzzle(folder, solver, result);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+/**
+ * Builds and returns the final puzzle image, without displaying it.
+ *
+ * @param piecesFolder the folder containing the pieces
+ * @param solver the solver used to assemble the puzzle
+ * @param result the result object containing the matrix
+ * @return a BufferedImage of the assembled puzzle
+ * @throws IOException if an image can't be loaded
+ */
+public static BufferedImage getAssembledImage(Path piecesFolder, PuzzleSolver solver, PuzzleSolver.PuzzleResult result) throws IOException {
+    return getAssembledImageWithProgress(piecesFolder, solver, result, null);
+}
+
+/**
+ * Builds and returns the final puzzle image, displaying a progress bar during the process.
+ *
+ * @param piecesFolder the folder containing the pieces
+ * @param solver the solver used to assemble the puzzle
+ * @param result the result object containing the matrix
+ * @param listener optional listener to track progress
+ * @return a BufferedImage of the assembled puzzle
+ * @throws IOException if an image can't be loaded
+ */
+public static BufferedImage getAssembledImageWithProgress(Path piecesFolder, PuzzleSolver solver, PuzzleSolver.PuzzleResult result, ProgressListener listener) throws IOException {
+    PuzzleImageViewer viewer = new PuzzleImageViewer(piecesFolder, solver, result);
+    return viewer.assemblePuzzle(listener);
+}
+
+
+
 }
