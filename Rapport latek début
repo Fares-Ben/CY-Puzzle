@@ -1,7 +1,7 @@
 \documentclass[12pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[english]{babel}
+\usepackage[french]{babel}
 \usepackage{graphicx}
 \usepackage{geometry}
 \usepackage{hyperref}
@@ -9,8 +9,15 @@
 
 \geometry{margin=2.5cm}
 
-\title{Java Project Report}
-\author{Team Name / Members}
+\title{Rapport de Projet Java, CY-PUZZLE}
+\author{
+  Groupe 13 \\[1em] % <--- ajoute un espace vertical de 1em après "Groupe 13"
+  Maxime CLEMENT \\
+  Rayan SAIL \\
+  Nael AHMED \\
+  Fares BEN MABROUK \\
+  Mehdi BOULAICH
+}
 \date{\today}
 
 \begin{document}
@@ -19,27 +26,28 @@
 \tableofcontents
 \newpage
 
-\section{Team Organization}
-Our team organization was structured around several key roles to ensure an efficient distribution of tasks. Each member had a main responsibility:
+\section{Organisation de l'équipe}
+L'organisation de notre équipe s'est articulée autour de plusieurs rôles clés afin d'assurer une répartition efficace des tâches. Chaque membre avait une responsabilité principale :
 
 \begin{itemize}
-  \item \textbf{Progress Meeting Coordinator} – general coordination, project tracking, scheduling.
-  \item \textbf{Developers} – feature development, unit testing.
-  \item \textbf{Documentation Lead} – writing technical documentation and the final report.
-  \item \textbf{Quality Manager} – code review, ensuring compliance with the specifications.
+  \item \textbf{Coordinateur des réunions de suivi} – coordination générale, suivi du projet, planification.
+  \item \textbf{Développeurs} – développement des fonctionnalités, tests unitaires.
+  \item \textbf{Responsable documentation} – rédaction de la documentation technique et du rapport final.
+  \item \textbf{Responsable qualité} – relecture du code, conformité avec les spécifications.
 \end{itemize}
 
 \vspace{1em}
-\noindent\textbf{Role Distribution within the Team:}
+\noindent\textbf{Répartition des rôles au sein de l’équipe :}
 \begin{itemize}
-  \item Fares BEN MABROUK — Progress Meeting Coordinator
-  \item Maxime CLEMENT, Fares BEN MABROUK, Nael AHMED, Mehdi BOULAICH, Rayan SAIL — Developers
-  \item Rayan SAIL — Documentation Lead
-  \item Fares BEN MABROUK, Maxime CLEMENT, Mehdi BOULAICH, Nael AHMED, Rayan SAIL — Quality Managers
+  \item Fares BEN MABROUK — Coordinateur des réunions
+  \item Maxime CLEMENT, Fares BEN MABROUK, Nael AHMED, Mehdi BOULAICH, Rayan SAIL — Développeurs
+  \item Rayan SAIL — Responsable documentation
+  \item Maxime CLEMENT, Rayan SAIL, Mehdi BOULAICH, Nael AHMED, Fares Ben Mabrouk — Responsables qualité
 \end{itemize}
 
+\vspace{2em} 
 
-This project required, beyond pure coding, a lot of thought regarding the methods used (analyzing pieces, comparing them, developing a puzzle-solving algorithm). Thus, we first created a basic graphical interface, and then each member tried to implement their ideas for solving the puzzle algorithmically. Everyone worked individually on their own algorithm. However, to maintain coherence and truly work as a group, we met almost daily (once every day or two) to update each other on progress and make decisions accordingly. To be more precise, we used a task management tool (JIRA) as illustrated below.
+Ce projet a demandé, au-delà du simple codage, beaucoup de réflexion sur les méthodes utilisées (analyse des pièces, comparaison, élaboration d’un algorithme de résolution). Ainsi, nous avons d’abord réalisé une interface graphique basique, puis chaque membre a tenté de développer sa propre idée pour résoudre le puzzle de manière algorithmique. Chacun a travaillé individuellement sur son propre algorithme. Cependant, pour garder une cohérence et réellement travailler en équipe, nous nous sommes réunis presque tous les jours (tous les un à deux jours) pour faire un point sur l’avancement de chacun et prendre les décisions ensemble. Plus précisément, nous avons utilisé un outil de gestion des tâches (JIRA) comme illustré ci-dessous.
 
 \begin{figure}[htbp]
   \centering
@@ -48,68 +56,66 @@ This project required, beyond pure coding, a lot of thought regarding the method
   \label{fig:imageJIRA}
 \end{figure}
 
+Pour donner un exemple concret, après plusieurs réunions, nous avons unanimement décidé que l’avancement de Maxime sur l’algorithme de résolution était suffisamment poussé. Le groupe a donc commencé à travailler ensemble sur l'affichage du puzzle résolu (assemblage correct des pièces et affichage dans l’interface graphique).
 
-To give a concrete example, after several meetings, we unanimously agreed that Maxime’s progress on the puzzle-solving algorithm was far enough along, so the group began working together on displaying the solved puzzle (correctly assembling the pieces and displaying them on the GUI).
+De plus, chaque semaine, nous avions une réunion avec notre encadrante de projet : Mme HAWARI.
 
-Additionally, each week we had a meeting with our project supervisor: Mrs. HAWARI.
-
-\section{Problems Encountered and Solutions}
-During development, we encountered several challenges:
+\section{Problèmes rencontrés et solutions}
+Lors du développement, nous avons été confrontés à plusieurs difficultés :
 
 \begin{itemize}
 
-  \item \textbf{Technical Problem}: Detecting the real corners of a puzzle piece.
+  \item \textbf{Problème technique} : Détection des vrais coins d’une pièce de puzzle.
   \begin{itemize}
-    \item \textit{\underline{Solution}}: We only extracted the contour of the piece, and from this contour, using a pixel pattern, we identified the 4 corners.
+    \item \textit{\underline{Solution}} : Nous avons extrait le contour de la pièce, puis à partir de ce contour, en suivant un motif de pixels, nous avons identifié les 4 coins.
   \end{itemize}
   
-  \item \textbf{Technical Problem}: Extracting relevant information to compare two edges (developing the comparison algorithm).
+  \item \textbf{Problème technique} : Extraire les bonnes informations pour comparer deux bords (développement de l’algorithme de comparaison).
   \begin{itemize}
-    \item \textit{\underline{Solution}}: We retrieve multiple pieces of information, including the pixel size, edge colors, depth, and part of the shape of the notch or the protrusion.
+    \item \textit{\underline{Solution}} : Nous avons extrait plusieurs informations comme la taille en pixels, les couleurs des bords, la profondeur, et une partie de la forme du creux ou du tenon.
   \end{itemize}
 
-  \item \textbf{Technical Problem} – Difficulty in visually displaying puzzle pieces. Our initial method was to assemble the puzzle row by row and then merge the rows together. The displayed puzzle was not correctly aligned graphically, although the logical result was correct. Furthermore, there were consistent alignment issues when visually combining the pieces. The tenon-to-notch alignment was one of our biggest challenges.
+  \item \textbf{Problème technique} – Difficulté à afficher les pièces visuellement. Notre méthode initiale consistait à assembler le puzzle ligne par ligne, puis à fusionner les lignes entre elles. Le puzzle affiché n’était pas bien aligné graphiquement, bien que le résultat logique soit correct. De plus, il y avait des problèmes récurrents d’alignement lors de l’assemblage visuel. L’alignement tenon-creux était l’un des plus gros défis.
   \begin{itemize}
-    \item \textit{\underline{Solution}}: We decided to completely change our approach and start from scratch. The previous method was deemed inadequate, so we opted for a piece-by-piece strategy. We retrieve the final image’s width and height, then align the corners accordingly. Thanks to this approach, we can accurately position the pieces and display them correctly in the graphical interface.
+    \item \textit{\underline{Solution}} : Nous avons décidé de repartir complètement de zéro. L’ancienne méthode s’est avérée inadéquate, nous avons donc opté pour une stratégie pièce par pièce. Nous récupérons la largeur et la hauteur de l’image finale, puis alignons les coins en conséquence. Grâce à cette méthode, nous pouvons positionner précisément les pièces et les afficher correctement dans l’interface.
   \end{itemize}
   
-  \item \textbf{Technical Problem} – Noise issue: The lower the image resolution (fewer pixels), the higher the color difference between two edges can be. Therefore, we must take this noise (color deviation) into account, which varies according to the size of each puzzle. The lower the image resolution (fewer pixels), the more color difference between two pixels, and thus between two edges of a piece, can cause problems in our algorithm to fit them together.
+  \item \textbf{Problème technique} – Problème de bruit : Plus la résolution de l’image est faible (peu de pixels), plus la différence de couleur entre deux bords peut être importante. Il faut donc prendre en compte ce bruit (écart de couleur) qui dépend de la taille du puzzle. Cela rend les comparaisons plus difficiles, et peut provoquer de mauvais emboîtements.
   \begin{itemize}
-    \item \textit{\underline{Solution}}: Implementation of a 'tolerance' parameter, but it needs to be calibrated for EACH puzzle, which is complicated to adjust for every puzzle.
+    \item \textit{\underline{Solution}} : Mise en place d’un paramètre de « tolérance », mais il doit être calibré pour CHAQUE puzzle, ce qui est compliqué à ajuster à chaque fois.
   \end{itemize}
 
-  \item \textbf{Technical Problem} – One of the major challenges we faced was solving puzzles with A LOT of pieces. The primary difficulty stemmed from the sheer number of pieces, which significantly increased the computational complexity. The matching process between pieces became much slower, and memory usage grew rapidly, occasionally leading to performance issues or even crashes. Additionally, handling such a large number of images made both debugging and visualization more complex. These factors made it difficult to scale our solution efficiently to such large puzzles within the time constraints of the project. 
+  \item \textbf{Problème technique} – L’un des défis majeurs rencontrés a été la résolution de puzzles avec BEAUCOUP de pièces. Le nombre élevé de pièces augmentait fortement la complexité algorithmique. Le processus d’appariement entre les pièces devenait lent, et l’usage mémoire augmentait, provoquant parfois des ralentissements voire des plantages. Le débogage et l’affichage devenaient aussi plus compliqués. Ces facteurs ont rendu difficile la montée en charge de notre solution.
   \begin{itemize}
-    \item \textit{\underline{Solution}}: We regularly had to improve and refine the solving algorithm throughout the project. As new challenges and edge cases appeared, iterative enhancements were necessary to increase accuracy and efficiency. This ongoing optimization was crucial to handle different puzzle complexities and to progressively improve the overall performance. Concretely, we chose a greedy algorithm.
+    \item \textit{\underline{Solution}} : Nous avons dû constamment améliorer l’algorithme de résolution tout au long du projet. Face aux nouveaux cas et aux difficultés rencontrées, des ajustements itératifs ont été nécessaires pour augmenter la précision et l’efficacité. Concrètement, nous avons utilisé un algorithme glouton en optimisant un maximum les comparaisons et les données stockées.
   \end{itemize}
 
 \end{itemize}
 
-\section{Functional Limitations of the Project}
-Despite our development efforts, some limitations remain in the current version:
+\section{Limitations fonctionnelles du projet}
+Malgré nos efforts de développement, certaines limitations subsistent dans la version actuelle :
 
 \begin{itemize}
-  \item Puzzle pieces with rotation are not yet supported.
+  \item Les pièces avec rotation ne sont pas encore prises en charge.
 \end{itemize}
 
-On a pris trop de temps a essayé de bien résoudre l'algo pour les pièces normales, donc on s'est laissé dépassé et on s'est rendu compte trop tard de l'attaque aux rotations, nous avons essayé de faire marcher l'algo de résolution PARFAITEMENT pour les pièces normales (et il n'est pas completement parfait) et nous voulions passer a la rotation après avoir parfaitement gérer l'intégralité des cas de rotation.
+Nous avons passé trop de temps à essayer de résoudre correctement l’algorithme pour les pièces normales, ce qui nous a fait prendre du retard, et nous nous sommes rendu compte trop tard qu’il fallait aussi gérer les rotations. Nous avons voulu faire fonctionner l’algorithme PARFAITEMENT pour les pièces classiques (et il n’est pas encore totalement parfait), puis nous voulions passer à la gestion des rotations une fois tous les cas standards couverts.
 
-De plus quand les pièces de puzzles ont une résolution trop faible (peu de pixels sur chaque bords) notre algorithme a du mal dans les comparaisons / parfois plusieurs pièces arrivent a s'emobiter et notre algorithme glouton n'arrive pas a gérer ce cas.
+De plus, lorsque les pièces de puzzle ont une très faible résolution (peu de pixels par bord), notre algorithme a du mal à faire les comparaisons. Parfois, plusieurs pièces semblent pouvoir s’emboîter, et notre algorithme glouton n’arrive pas à bien gérer ce cas.
 
-\section{Project Timeline}
-At the begining of the project we divided into several phases spread across multiple weeks the planning we thought we needed to complete this project properly:
+\section{Chronologie du projet}
+Au début du projet, nous avons divisé notre travail en plusieurs phases réparties sur plusieurs semaines, en suivant une planification que nous pensions adaptée pour mener à bien le projet :
 
 \begin{enumerate}
-  \item \textbf{Design Phase} (Weeks 1–2): writing specifications, setting up Jira, initial class and use case diagrams.
-  \item \textbf{Initial Development Phase} (Weeks 3–4): setting up the architecture, brainstorming algorithmic approaches, implementing first features and GUI.
-  \item \textbf{Testing Phase} (Weeks 5–6): validation of the resolution algorithms, graphical puzzle assembly.
-  \item \textbf{Finalization Phase} (Week 7): bug fixes, documentation, project delivery.
+  \item \textbf{Phase de conception} (Semaines 1-1,5) : rédaction des spécifications, configuration de Jira, diagrammes qde classes et de cas d’utilisation initiaux.
+  \item \textbf{Phase de développement} (Semaines 2-4) : mise en place de l’architecture,  premières fonctionnalités et interface graphique, réflexion sur les algorithmes, validation des algorithmes de résolution, assemblage graphique du puzzle.
+  \item \textbf{Phase de finalisation} (Dernier jour) : corrections de bugs, JAVADOC, livraison du projet.
 \end{enumerate}
-However, due to exams, we had difficulty dedicating ourselves to the project at first. Right after the exam period, we experienced a somewhat slow and delayed start. The difficulty of the exams and the resulting fatigue slowed down our initial progress. However, once we got going, the team became serious and productive. Although we remained committed throughout, we ultimately lacked a bit of time to deliver a fully functional project.
-  
+
+Cependant, en raison des examens, nous avons dû mettre le projet en pause, ce qui nous a quelque peu « déconnectés ». À la reprise, juste après cette période, nous avons rencontré quelques difficultés pour nous remettre dans le rythme. La charge et la difficulté des examens, ainsi que la fatigue accumulée, ont ralenti notre progression. Mais une fois relancés, l’équipe s’est montrée sérieuse et efficace. Malgré notre engagement constant tout au long du projet, il nous a malheureusement manqué un peu de temps pour livrer une version pleinement fonctionnelle.
+
 \vspace{2em} 
 
-We found the project to be much more challenging than expected. However, by working together, we managed to overcome the many unexpected difficulties we encountered. Through serious and collaborative teamwork, we are proud of what we have accomplished on this project.
-
+Nous avons trouvé le projet bien plus difficile que ce que nous imaginions. Toutefois, il était très intéressant et en travaillant ensemble, nous avons surmonté de nombreuses difficultés imprévues. Nous sommes fiers de ce que nous avons accompli sur ce projet.
 
 \end{document}
