@@ -1,7 +1,7 @@
 \documentclass[12pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[french]{babel}
+\usepackage[english]{babel}
 \usepackage{graphicx}
 \usepackage{geometry}
 \usepackage{hyperref}
@@ -9,8 +9,8 @@
 
 \geometry{margin=2.5cm}
 
-\title{Rapport de Projet Java}
-\author{Nom de l'équipe / Membres}
+\title{Java Project Report}
+\author{Team Name / Members}
 \date{\today}
 
 \begin{document}
@@ -19,65 +19,73 @@
 \tableofcontents
 \newpage
 
-\section{Organisation de l'équipe}
-L'organisation de notre équipe a été structurée autour de plusieurs rôles clés afin de garantir une répartition efficace des tâches. Chaque membre avait une responsabilité principale :
+\section{Team Organization}
+Our team organization was structured around several key roles to ensure an efficient distribution of tasks. Each member had a main responsibility:
 
 \begin{itemize}
-  \item \textbf{Responsable réunion avancement groupe} : coordination générale, suivi de l’avancement, gestion du planning.
-  \item \textbf{Développeurs} : développement des fonctionnalités, tests unitaires.
-  \item \textbf{Responsable documentation} : rédaction de la documentation technique et du rapport.
-  \item \textbf{Responsable qualité} : revue de code, vérification du respect des bonnes pratiques.
+  \item \textbf{Progress Meeting Coordinator} – general coordination, project tracking, scheduling.
+  \item \textbf{Developers} – feature development, unit testing.
+  \item \textbf{Documentation Lead} – writing technical documentation and the final report.
+  \item \textbf{Quality Manager} – code review, ensuring compliance with the specifications.
 \end{itemize}
 
 \vspace{1em}
-\noindent\textbf{Répartition des rôles dans l'équipe :}
+\noindent\textbf{Role Distribution within the Team:}
 \begin{itemize}
-  \item Fares BEN MABROUK — Responsable réunion avancement groupe
-  \item Maxime CLEMENT, Fares BEN MABROUK, Nael AHMED, Mehdi BOULAICH, Rayan SAIL — Développeur
-  \item Rayan SAIL, Mehdi BOULAICH,  — Responsable documentation
-  \item Fares BEN MABROUK, Maxime CLEMENT, Mehdi BOULAICH, Nael AHMED — Responsable qualité
+  \item Fares BEN MABROUK — Progress Meeting Coordinator
+  \item Maxime CLEMENT, Fares BEN MABROUK, Nael AHMED, Mehdi BOULAICH, Rayan SAIL — Developers
+  \item Rayan SAIL — Documentation Lead
+  \item Fares BEN MABROUK, Maxime CLEMENT, Mehdi BOULAICH, Nael AHMED, Rayan SAIL — Quality Managers
 \end{itemize}
 
-Des réunions tous les 4-5 jours ont été organisées pour faire le point sur l’avancement du projet et réajuster les priorités si nécessaire. De plus, chaque semaine nous avions un point avec notre tutrice de projet : Madame HAWARI.
+This project required, beyond pure coding, a lot of thought regarding the methods used (analyzing pieces, comparing them, developing a puzzle-solving algorithm). Thus, we first created a basic graphical interface, and then each member tried to implement their ideas for solving the puzzle algorithmically. Everyone worked individually on their own algorithm. However, to maintain coherence and truly work as a group, we met almost daily (once every day or two) to update each other on progress and make decisions accordingly. 
 
-\section{Problèmes rencontrés et solutions apportées}
-Durant le développement, plusieurs difficultés ont été rencontrées :
+To give a concrete example, after several meetings, we unanimously agreed that Maxime’s progress on the puzzle-solving algorithm was far enough along, so the group began working together on displaying the solved puzzle (correctly assembling the pieces and displaying them on the GUI).
 
+Additionally, each week we had a meeting with our project supervisor: Mrs. HAWARI.
+
+\section{Problems Encountered and Solutions}
+During development, we encountered several challenges:
 \begin{itemize}
-  \item \textbf{Problème technique} : Difficulté pour assembler les pièces de puzzle visuellement 
+  \item \textbf{Technical Problem} – Difficulty in visually displaying puzzle pieces. Our initial method was to assemble the puzzle row by row and then merge the rows together. The displayed puzzle was not correctly aligned graphically, although the logical result was correct. Furthermore, there were consistent alignment issues when visually combining the pieces. The tenon-to-notch alignment was one of our biggest challenges.
   \begin{itemize}
-    \item \textit{Solution} : 
+    \item \textit{\underline{Solution}}: We decided to completely change our approach and start from scratch. The previous method was deemed inadequate, so we opted for a piece-by-piece strategy. By focusing on assembling pieces directly based on their edges, we resolved the tenon alignment issue. Initially, we attempted precise calculations between tenons and notches, but directly aligning the borders solved this problem effectively.
   \end{itemize}
   
-  \item \textbf{Problème technique} : Difficulté pour résoudre les puzzles avec des pièces ayant peu de pixels, l'analyse des pièces est compliquée.
+  \item \textbf{Technical Problem} – Difficulty analyzing puzzle pieces with few pixels. We used a color-based estimation system, and analysis was difficult when the pieces had few pixels.
   \begin{itemize}
-    \item \textit{Solution} :
+    \item \textit{\underline{Solution}}: 
   \end{itemize}
 
-  \item \textbf{Problème technique} : Télécharger image finale
+  \item \textbf{Technical Problem} – One of the major challenges we faced was solving puzzles with A LOT of pieces. The primary difficulty stemmed from the sheer number of pieces, which significantly increased the computational complexity. The matching process between pieces became much slower, and memory usage grew rapidly, occasionally leading to performance issues or even crashes. Additionally, handling such a large number of images made both debugging and visualization more complex. These factors made it difficult to scale our solution efficiently to such large puzzles within the time constraints of the project.
   \begin{itemize}
-    \item \textit{Solution} : 
+    \item \textit{\underline{Solution}}: We regularly had to improve and refine the solving algorithm throughout the project. As new challenges and edge cases appeared, iterative enhancements were necessary to increase accuracy and efficiency. This ongoing optimization was crucial to handle different puzzle complexities and to progressively improve the overall performance.
   \end{itemize}
 \end{itemize}
 
-\section{Limites fonctionnelles du projet}
-Malgré les efforts de développement, certaines limitations persistent dans la version actuelle du projet :
+\section{Functional Limitations of the Project}
+Despite our development efforts, some limitations remain in the current version:
 
 \begin{itemize}
-  \item Puzzle a pièces avec rotations pas encore traité
+  \item Puzzle pieces with rotation are not yet supported.
 \end{itemize}
 
-Ces limites sont dues à des contraintes de temps et à la complexité technique de certaines fonctionnalités.
+These limitations are due to time constraints and the technical complexity of certain features.
 
-\section{Planning de réalisation}
-Le projet a été planifié en plusieurs phases réparties sur plusieurs semaines :
+\section{Project Timeline}
+At the begining of the project we divided into several phases spread across multiple weeks the planning we thought we needed to complete this project properly:
 
 \begin{enumerate}
-  \item \textbf{Phase de conception} (Semaine 1-2) : rédaction des spécifications, diagrammes UML.
-  \item \textbf{Phase de développement initial} (Semaine 3-5) : mise en place de l’architecture, développement des premières fonctionnalités.
-  \item \textbf{Phase de tests} (Semaine 6) : tests unitaires et validation fonctionnelle.
-  \item \textbf{Phase de finalisation} (Semaine 7) : correction des bugs, documentation, mise en production.
+  \item \textbf{Design Phase} (Weeks 1–2): writing specifications, setting up Jira, initial class and use case diagrams.
+  \item \textbf{Initial Development Phase} (Weeks 3–4): setting up the architecture, brainstorming algorithmic approaches, implementing first features and GUI.
+  \item \textbf{Testing Phase} (Weeks 5–6): validation of the resolution algorithms, graphical puzzle assembly.
+  \item \textbf{Finalization Phase} (Week 7): bug fixes, documentation, project delivery.
 \end{enumerate}
+However, due to exams, we had difficulty dedicating ourselves to the project at first. Right after the exam period, we experienced a somewhat slow and delayed start. The difficulty of the exams and the resulting fatigue slowed down our initial progress. However, once we got going, the team became serious and productive. Although we remained committed throughout, we ultimately lacked a bit of time to deliver a fully functional project.
+  
+\vspace{2em} 
+
+We found the project to be much more challenging than expected. However, by working together, we managed to overcome the many unexpected difficulties we encountered. Through serious and collaborative teamwork, we are proud of what we have accomplished on this project.
 
 
 \end{document}
