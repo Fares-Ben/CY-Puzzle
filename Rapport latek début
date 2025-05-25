@@ -38,7 +38,16 @@ Our team organization was structured around several key roles to ensure an effic
   \item Fares BEN MABROUK, Maxime CLEMENT, Mehdi BOULAICH, Nael AHMED, Rayan SAIL — Quality Managers
 \end{itemize}
 
-This project required, beyond pure coding, a lot of thought regarding the methods used (analyzing pieces, comparing them, developing a puzzle-solving algorithm). Thus, we first created a basic graphical interface, and then each member tried to implement their ideas for solving the puzzle algorithmically. Everyone worked individually on their own algorithm. However, to maintain coherence and truly work as a group, we met almost daily (once every day or two) to update each other on progress and make decisions accordingly. 
+
+This project required, beyond pure coding, a lot of thought regarding the methods used (analyzing pieces, comparing them, developing a puzzle-solving algorithm). Thus, we first created a basic graphical interface, and then each member tried to implement their ideas for solving the puzzle algorithmically. Everyone worked individually on their own algorithm. However, to maintain coherence and truly work as a group, we met almost daily (once every day or two) to update each other on progress and make decisions accordingly. To be more precise, we used a task management tool (JIRA) as illustrated below.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{H:/Pictures/imageJIRA.PNG}
+  \caption{ImageJIRA}
+  \label{fig:imageJIRA}
+\end{figure}
+
 
 To give a concrete example, after several meetings, we unanimously agreed that Maxime’s progress on the puzzle-solving algorithm was far enough along, so the group began working together on displaying the solved puzzle (correctly assembling the pieces and displaying them on the GUI).
 
@@ -46,21 +55,34 @@ Additionally, each week we had a meeting with our project supervisor: Mrs. HAWAR
 
 \section{Problems Encountered and Solutions}
 During development, we encountered several challenges:
+
 \begin{itemize}
-  \item \textbf{Technical Problem} – Difficulty in visually displaying puzzle pieces. Our initial method was to assemble the puzzle row by row and then merge the rows together. The displayed puzzle was not correctly aligned graphically, although the logical result was correct. Furthermore, there were consistent alignment issues when visually combining the pieces. The tenon-to-notch alignment was one of our biggest challenges.
+
+  \item \textbf{Technical Problem}: Detecting the real corners of a puzzle piece.
   \begin{itemize}
-    \item \textit{\underline{Solution}}: We decided to completely change our approach and start from scratch. The previous method was deemed inadequate, so we opted for a piece-by-piece strategy. By focusing on assembling pieces directly based on their edges, we resolved the tenon alignment issue. Initially, we attempted precise calculations between tenons and notches, but directly aligning the borders solved this problem effectively.
+    \item \textit{\underline{Solution}}: We only extracted the contour of the piece, and from this contour, using a pixel pattern, we identified the 4 corners.
   \end{itemize}
   
-  \item \textbf{Technical Problem} – Difficulty analyzing puzzle pieces with few pixels. We used a color-based estimation system, and analysis was difficult when the pieces had few pixels.
+  \item \textbf{Technical Problem}: Extracting relevant information to compare two edges (developing the comparison algorithm).
   \begin{itemize}
-    \item \textit{\underline{Solution}}: 
+    \item \textit{\underline{Solution}}: We retrieve multiple pieces of information, including the pixel size, edge colors, depth, and part of the shape of the notch or the protrusion.
   \end{itemize}
 
-  \item \textbf{Technical Problem} – One of the major challenges we faced was solving puzzles with A LOT of pieces. The primary difficulty stemmed from the sheer number of pieces, which significantly increased the computational complexity. The matching process between pieces became much slower, and memory usage grew rapidly, occasionally leading to performance issues or even crashes. Additionally, handling such a large number of images made both debugging and visualization more complex. These factors made it difficult to scale our solution efficiently to such large puzzles within the time constraints of the project.
+  \item \textbf{Technical Problem} – Difficulty in visually displaying puzzle pieces. Our initial method was to assemble the puzzle row by row and then merge the rows together. The displayed puzzle was not correctly aligned graphically, although the logical result was correct. Furthermore, there were consistent alignment issues when visually combining the pieces. The tenon-to-notch alignment was one of our biggest challenges.
   \begin{itemize}
-    \item \textit{\underline{Solution}}: We regularly had to improve and refine the solving algorithm throughout the project. As new challenges and edge cases appeared, iterative enhancements were necessary to increase accuracy and efficiency. This ongoing optimization was crucial to handle different puzzle complexities and to progressively improve the overall performance.
+    \item \textit{\underline{Solution}}: We decided to completely change our approach and start from scratch. The previous method was deemed inadequate, so we opted for a piece-by-piece strategy. We retrieve the final image’s width and height, then align the corners accordingly. Thanks to this approach, we can accurately position the pieces and display them correctly in the graphical interface.
   \end{itemize}
+  
+  \item \textbf{Technical Problem} – Noise issue: The lower the image resolution (fewer pixels), the higher the color difference between two edges can be. Therefore, we must take this noise (color deviation) into account, which varies according to the size of each puzzle. The lower the image resolution (fewer pixels), the more color difference between two pixels, and thus between two edges of a piece, can cause problems in our algorithm to fit them together.
+  \begin{itemize}
+    \item \textit{\underline{Solution}}: Implementation of a 'tolerance' parameter, but it needs to be calibrated for EACH puzzle, which is complicated to adjust for every puzzle.
+  \end{itemize}
+
+  \item \textbf{Technical Problem} – One of the major challenges we faced was solving puzzles with A LOT of pieces. The primary difficulty stemmed from the sheer number of pieces, which significantly increased the computational complexity. The matching process between pieces became much slower, and memory usage grew rapidly, occasionally leading to performance issues or even crashes. Additionally, handling such a large number of images made both debugging and visualization more complex. These factors made it difficult to scale our solution efficiently to such large puzzles within the time constraints of the project. 
+  \begin{itemize}
+    \item \textit{\underline{Solution}}: We regularly had to improve and refine the solving algorithm throughout the project. As new challenges and edge cases appeared, iterative enhancements were necessary to increase accuracy and efficiency. This ongoing optimization was crucial to handle different puzzle complexities and to progressively improve the overall performance. Concretely, we chose a greedy algorithm.
+  \end{itemize}
+
 \end{itemize}
 
 \section{Functional Limitations of the Project}
@@ -70,7 +92,9 @@ Despite our development efforts, some limitations remain in the current version:
   \item Puzzle pieces with rotation are not yet supported.
 \end{itemize}
 
-These limitations are due to time constraints and the technical complexity of certain features.
+On a pris trop de temps a essayé de bien résoudre l'algo pour les pièces normales, donc on s'est laissé dépassé et on s'est rendu compte trop tard de l'attaque aux rotations, nous avons essayé de faire marcher l'algo de résolution PARFAITEMENT pour les pièces normales (et il n'est pas completement parfait) et nous voulions passer a la rotation après avoir parfaitement gérer l'intégralité des cas de rotation.
+
+De plus quand les pièces de puzzles ont une résolution trop faible (peu de pixels sur chaque bords) notre algorithme a du mal dans les comparaisons / parfois plusieurs pièces arrivent a s'emobiter et notre algorithme glouton n'arrive pas a gérer ce cas.
 
 \section{Project Timeline}
 At the begining of the project we divided into several phases spread across multiple weeks the planning we thought we needed to complete this project properly:
